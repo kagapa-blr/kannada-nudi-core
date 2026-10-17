@@ -88,6 +88,10 @@ namespace nudi
         // emitted by the null-vowel default mode.
         bool explicit_virama_ = false;
 
+        // NumLock apostrophe alternates between the right and left
+        // quotation marks, matching the Windows reference keyboard.
+        bool apostrophe_toggle_ = false;
+
         // Current UTF-8 composition buffer.
         std::string text_;
     };

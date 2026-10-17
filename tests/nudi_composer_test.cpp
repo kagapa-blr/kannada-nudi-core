@@ -250,7 +250,8 @@ void run_key_tests(
                 test.caps_lock,
                 test.ctrl,
                 test.num_lock,
-                test.alt);
+                test.alt) +
+            composer.preedit();
 
 
         std::string input;
@@ -436,6 +437,45 @@ void run_backspace_tests(
             : composer.preedit());
 }
 
+
+// ============================================================
+// Lock-layer state tests
+// ============================================================
+
+void run_lock_state_tests(
+    nudi::Composer &composer,
+    TestReporter &reporter,
+    TestStats &stats)
+{
+    nudi::Composer quote_composer;
+
+    const std::string first_quote =
+        quote_composer.feed('\'', false, false, false, true, false);
+    const std::string second_quote =
+        quote_composer.feed('\'', false, false, false, true, false);
+    const std::string quotes = first_quote + second_quote;
+
+    reporter.check(
+        stats,
+        "STATE-002",
+        "NumLock apostrophe alternation",
+        "NumLock+' + NumLock+'",
+        "’‘",
+        quotes);
+
+    composer.reset();
+    const std::string a_result = composer.feed('a');
+    const std::string f_result = composer.feed('f');
+
+    reporter.check(
+        stats,
+        "STATE-003",
+        "f after independent vowel",
+        "af",
+        "ಅ",
+        a_result + f_result + composer.preedit());
+}
+
 } // namespace
 
 
@@ -545,6 +585,11 @@ int main()
         stats);
 
     run_backspace_tests(
+        composer,
+        reporter,
+        stats);
+
+    run_lock_state_tests(
         composer,
         reporter,
         stats);

@@ -60,6 +60,27 @@ const std::vector<ReferenceTestCase> &reference_test_cases()
             "ಮಂತ್ರಿ"
         },
 
+        {
+            "WORD-008",
+            "shifted consonant and vowel",
+            "KkE",
+            "ಖಕೇ"
+        },
+
+        {
+            "WORD-009",
+            "independent vowels with signs",
+            "aMiH",
+            "ಅಂಇಃ"
+        },
+
+        {
+            "WORD-010",
+            "nukta after consonant",
+            "jX",
+            "ಜ಼"
+        },
+
   
 
     };
@@ -80,17 +101,122 @@ const std::vector<KeyTestCase> &key_test_cases()
         // Shift mappings
         // ----------------------------------------------------
 
-        // {
-        //     "KEY-001",
-        //     "Shift consonant",
-        //     'q',
-        //     true,
-        //     false,
-        //     false,
-        //     false,
-        //     false,
-        //     "ಠ"
-        // },
+        {
+            "KEY-001",
+            "Shift consonant",
+            'q',
+            true,
+            false,
+            false,
+            false,
+            false,
+            false,
+            "ಠ"
+        },
+
+        {
+            "KEY-002",
+            "Shift independent vowel",
+            'a',
+            true,
+            false,
+            false,
+            false,
+            false,
+            false,
+            "ಆ"
+        },
+
+        {
+            "KEY-003",
+            "Normal digit without Num Lock",
+            '5',
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            "5"
+        },
+
+        {
+            "KEY-004",
+            "Kannada digit with Num Lock",
+            '5',
+            false,
+            false,
+            false,
+            false,
+            false,
+            true,
+            "೫"
+        },
+
+        {
+            "KEY-005",
+            "ASCII digit with Scroll Lock",
+            '5',
+            false,
+            false,
+            false,
+            false,
+            true,
+            false,
+            "5"
+        },
+
+        {
+            "KEY-006",
+            "Caps Lock symbol",
+            '4',
+            false,
+            true,
+            false,
+            false,
+            false,
+            false,
+            "₹"
+        },
+
+        {
+            "KEY-009",
+            "Caps Lock zero mapping",
+            '0',
+            false,
+            true,
+            false,
+            false,
+            false,
+            false,
+            "ಁ"
+        },
+
+        {
+            "KEY-007",
+            "Caps Lock shifted closing bracket",
+            '}',
+            true,
+            true,
+            false,
+            false,
+            false,
+            false,
+            "ೡ"
+        },
+
+        {
+            "KEY-008",
+            "Caps Lock shifted H remains Latin",
+            'h',
+            true,
+            true,
+            false,
+            false,
+            false,
+            false,
+            "H"
+        },
 
  
         // ----------------------------------------------------

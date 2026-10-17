@@ -21,6 +21,7 @@ namespace
         GtkWidget *status;
         nudi::Composer composer;
         std::string document;
+        bool ibus_active = false;
     };
 
     void remove_last_utf8(std::string &text)
@@ -48,6 +49,13 @@ namespace
 
     gboolean on_key_press(GtkWidget *, GdkEventKey *event, Editor *editor)
     {
+        // When IBus is active it owns the composition and commits text
+        // directly to the GtkTextView.  Do not run the editor's separate
+        // local composer or refresh the buffer, or a separator such as
+        // Space would overwrite IBus' committed/preedit text.
+        if (editor->ibus_active)
+            return FALSE;
+
         if ((event->state & (GDK_CONTROL_MASK | GDK_MOD1_MASK | GDK_SUPER_MASK)) != 0)
             return FALSE;
         if (event->keyval == GDK_KEY_BackSpace)
@@ -172,10 +180,11 @@ namespace
         return trim_copy(output) == "nudi";
     }
 
-    void ensure_ibus_session(Editor *editor)
+    bool ensure_ibus_session(Editor *editor)
     {
         if (editor != nullptr)
         {
+            editor->ibus_active = false;
             gtk_label_set_text(GTK_LABEL(editor->status), "Checking IBus...");
         }
 
@@ -187,7 +196,7 @@ namespace
                 {
                     gtk_label_set_text(GTK_LABEL(editor->status), "Failed to start IBus");
                 }
-                return;
+                return false;
             }
 
             if (!wait_for_ibus_ready(20))
@@ -196,7 +205,7 @@ namespace
                 {
                     gtk_label_set_text(GTK_LABEL(editor->status), "IBus is still unavailable");
                 }
-                return;
+                return false;
             }
         }
 
@@ -208,14 +217,17 @@ namespace
                 {
                     gtk_label_set_text(GTK_LABEL(editor->status), "Nudi could not be activated");
                 }
-                return;
+                return false;
             }
         }
 
         if (editor != nullptr)
         {
+            editor->ibus_active = true;
             gtk_label_set_text(GTK_LABEL(editor->status), "Nudi system engine active");
         }
+
+        return true;
     }
 
     void shutdown_ibus_session()
