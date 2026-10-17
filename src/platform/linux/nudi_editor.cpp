@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cctype>
 #include <string>
+#include <vector>
 
 namespace
 {
@@ -141,6 +142,7 @@ namespace
         Editor *help_tab = nullptr;
         GtkWidget *menu_bar = nullptr;
         UiLanguage language = UiLanguage::Kannada;
+        guint ibus_retry_source = 0;
         std::string filename;
         std::string line_ending = "LF";
         int zoom = 14;
@@ -151,6 +153,8 @@ namespace
 
         ~Editor()
         {
+            if (ibus_retry_source != 0)
+                g_source_remove(ibus_retry_source);
             if (zoom_provider != nullptr)
                 g_object_unref(zoom_provider);
         }
@@ -259,7 +263,7 @@ namespace
             g_free(basename);
         }
         const std::string title =
-            (tab->dirty ? "*" : "") + name + " - Nudi Kannada Editor";
+            (tab->dirty ? "*" : "") + name + " - Kannada Nudi Editor";
         gtk_window_set_title(GTK_WINDOW(app->window), title.c_str());
 
         if (tab->tab_label != nullptr)
@@ -476,7 +480,7 @@ namespace
         gtk_text_view_set_bottom_margin(GTK_TEXT_VIEW(tab->view), 14);
 
         const char *help_text =
-            "Nudi Kannada\n"
+            "Kannada Nudi Editor\n"
             "================\n\n"
             "A Kannada Nudi keyboard and text editor for Ubuntu.\n\n"
             "Keyboard engine\n"
@@ -1249,6 +1253,8 @@ namespace
         return ok && exit_status == 0;
     }
 
+    bool ibus_has_nudi_engine();
+
     bool wait_for_ibus_ready(int retries)
     {
         for (int attempt = 0; attempt < retries; ++attempt)
@@ -1258,6 +1264,18 @@ namespace
             {
                 return true;
             }
+            g_usleep(250000);
+        }
+
+        return false;
+    }
+
+    bool wait_for_nudi_engine(int retries)
+    {
+        for (int attempt = 0; attempt < retries; ++attempt)
+        {
+            if (ibus_has_nudi_engine())
+                return true;
             g_usleep(250000);
         }
 
@@ -1286,6 +1304,9 @@ namespace
         return trim_copy(output) == "nudi";
     }
 
+    bool ensure_ibus_session(Editor *editor);
+    void schedule_ibus_retry(Editor *editor);
+
     bool ensure_ibus_session(Editor *editor)
     {
         if (editor != nullptr)
@@ -1305,7 +1326,7 @@ namespace
                 return false;
             }
 
-            if (!wait_for_ibus_ready(20))
+            if (!wait_for_ibus_ready(20) || !wait_for_nudi_engine(20))
             {
                 if (editor != nullptr)
                 {
@@ -1315,16 +1336,20 @@ namespace
             }
         }
 
+        for (int attempt = 0; attempt < 20 && !is_active_engine_nudi(); ++attempt)
+        {
+            run_ibus_command("ibus engine nudi");
+            if (!is_active_engine_nudi())
+                g_usleep(250000);
+        }
+
         if (!is_active_engine_nudi())
         {
-            if (!run_ibus_command("ibus engine nudi"))
+            if (editor != nullptr)
             {
-                if (editor != nullptr)
-                {
-                    update_status(editor, "Nudi could not be activated");
-                }
-                return false;
+                update_status(editor, "Nudi could not be activated");
             }
+            return false;
         }
 
         if (editor != nullptr)
@@ -1334,6 +1359,36 @@ namespace
         }
 
         return true;
+    }
+
+    gboolean retry_ibus_session(gpointer data)
+    {
+        Editor *editor = static_cast<Editor *>(data);
+        if (editor == nullptr || editor->ibus_active)
+        {
+            if (editor != nullptr)
+                editor->ibus_retry_source = 0;
+            return G_SOURCE_REMOVE;
+        }
+
+        if (ensure_ibus_session(editor))
+        {
+            editor->ibus_retry_source = 0;
+            return G_SOURCE_REMOVE;
+        }
+
+        return G_SOURCE_CONTINUE;
+    }
+
+    void schedule_ibus_retry(Editor *editor)
+    {
+        if (editor == nullptr || editor->ibus_retry_source != 0)
+            return;
+
+        editor->ibus_retry_source = g_timeout_add_seconds(
+            2,
+            retry_ibus_session,
+            editor);
     }
 
     void shutdown_ibus_session()
@@ -1348,7 +1403,8 @@ namespace
 
     void on_start_engine(GtkWidget *, Editor *editor)
     {
-        ensure_ibus_session(editor);
+        if (!ensure_ibus_session(editor))
+            schedule_ibus_retry(workspace(editor));
     }
 
     void on_new_document(GtkWidget *, Editor *editor)
@@ -1437,12 +1493,48 @@ namespace
         return TRUE;
     }
 
+    void set_editor_icon(GtkWidget *window)
+    {
+        // The desktop entry supplies the themed icon after installation. Set
+        // it explicitly as well, then use the installed file as a fallback
+        // for desktops that have not refreshed their icon theme cache yet.
+        gtk_window_set_icon_name(GTK_WINDOW(window), "nudi");
+        gtk_window_set_default_icon_name("nudi");
+
+        const gchar *prefixes[] = {
+            "/usr/share/icons/hicolor/128x128/apps/nudi.png",
+            "/usr/local/share/icons/hicolor/128x128/apps/nudi.png",
+            "resources/icons/nudi.png",
+            nullptr};
+
+        for (const gchar **path = prefixes; *path != nullptr; ++path)
+        {
+            if (!g_file_test(*path, G_FILE_TEST_IS_REGULAR))
+                continue;
+
+            GError *error = nullptr;
+            GdkPixbuf *icon = gdk_pixbuf_new_from_file(*path, &error);
+            if (icon != nullptr)
+            {
+                gtk_window_set_icon(GTK_WINDOW(window), icon);
+                gtk_window_set_default_icon(icon);
+                g_object_unref(icon);
+                if (error != nullptr)
+                    g_error_free(error);
+                return;
+            }
+
+            if (error != nullptr)
+                g_error_free(error);
+        }
+    }
+
     void on_activate(GtkApplication *application, gpointer)
     {
         Editor *editor = new Editor{};
         editor->window = gtk_application_window_new(application);
-        gtk_window_set_title(GTK_WINDOW(editor->window), "Nudi Kannada Editor");
-        gtk_window_set_icon_name(GTK_WINDOW(editor->window), "nudi");
+        gtk_window_set_title(GTK_WINDOW(editor->window), "Kannada Nudi Editor");
+        set_editor_icon(editor->window);
         gtk_window_set_default_size(GTK_WINDOW(editor->window), 720, 460);
 
         GtkWidget *layout = gtk_box_new(GTK_ORIENTATION_VERTICAL, 8);
@@ -1522,7 +1614,8 @@ namespace
 
         editor_window_count()++;
         create_tab(editor);
-        ensure_ibus_session(editor);
+        if (!ensure_ibus_session(editor))
+            schedule_ibus_retry(editor);
 
         gtk_widget_show_all(editor->window);
     }

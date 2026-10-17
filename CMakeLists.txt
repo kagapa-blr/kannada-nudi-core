@@ -72,6 +72,18 @@ if(UNIX AND NOT APPLE)
 
     install(
         FILES "${CMAKE_SOURCE_DIR}/resources/icons/nudi.png"
+        DESTINATION share/icons/hicolor/48x48/apps
+        RENAME nudi.png
+    )
+
+    install(
+        FILES "${CMAKE_SOURCE_DIR}/resources/icons/nudi.png"
+        DESTINATION share/icons/hicolor/64x64/apps
+        RENAME nudi.png
+    )
+
+    install(
+        FILES "${CMAKE_SOURCE_DIR}/resources/icons/nudi.png"
         DESTINATION share/icons/hicolor/128x128/apps
         RENAME nudi.png
     )

@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=Nudi Kannada
+Name=Kannada Nudi Editor
 Comment=Kannada Nudi keyboard and editor
 Exec=/usr/bin/nudi-editor
 Icon=nudi
@@ -8,3 +8,5 @@ Type=Application
 Categories=Utility;Education;TextEditor;
 Keywords=Kannada;Keyboard;Input;Editor;
 StartupNotify=true
+StartupWMClass=nudi-editor
+X-GNOME-WMClass=nudi-editor
