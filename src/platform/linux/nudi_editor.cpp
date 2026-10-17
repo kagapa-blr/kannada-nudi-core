@@ -7,6 +7,117 @@
 namespace
 {
 
+    enum class UiLanguage
+    {
+        Kannada,
+        English
+    };
+
+    enum class UiLabel
+    {
+        File, Edit, View, Engine, Help, Options,
+        New, Open, Save, SaveAs, Exit, Cut, Copy, Paste,
+        SelectAll, Find, ZoomIn, ZoomOut, ResetZoom, WordWrap,
+        StartEngine, NudiHelp, ShowToolbar, ShowStatusBar,
+        NewTabTooltip, OpenTooltip, SaveTooltip, FindTooltip,
+        ZoomOutTooltip, ResetZoomTooltip, ZoomInTooltip,
+        Untitled, HelpTab, InsertMode, NudiActive, HelpStatus,
+        Line, Column, Characters
+    };
+
+    const char *ui_label(UiLanguage language, UiLabel label)
+    {
+        if (language == UiLanguage::English)
+        {
+            switch (label)
+            {
+            case UiLabel::File: return "File";
+            case UiLabel::Edit: return "Edit";
+            case UiLabel::View: return "View";
+            case UiLabel::Engine: return "Engine";
+            case UiLabel::Help: return "Help";
+            case UiLabel::Options: return "Options";
+            case UiLabel::New: return "New";
+            case UiLabel::Open: return "Open";
+            case UiLabel::Save: return "Save";
+            case UiLabel::SaveAs: return "Save As";
+            case UiLabel::Exit: return "Exit";
+            case UiLabel::Cut: return "Cut";
+            case UiLabel::Copy: return "Copy";
+            case UiLabel::Paste: return "Paste";
+            case UiLabel::SelectAll: return "Select All";
+            case UiLabel::Find: return "Find";
+            case UiLabel::ZoomIn: return "Zoom In";
+            case UiLabel::ZoomOut: return "Zoom Out";
+            case UiLabel::ResetZoom: return "Reset Zoom";
+            case UiLabel::WordWrap: return "Word Wrap";
+            case UiLabel::StartEngine: return "Start Nudi Engine";
+            case UiLabel::NudiHelp: return "Nudi Help";
+            case UiLabel::ShowToolbar: return "Show Toolbar";
+            case UiLabel::ShowStatusBar: return "Show Status Bar";
+            case UiLabel::NewTabTooltip: return "New tab (Ctrl+N)";
+            case UiLabel::OpenTooltip: return "Open text file (Ctrl+O)";
+            case UiLabel::SaveTooltip: return "Save document (Ctrl+S)";
+            case UiLabel::FindTooltip: return "Find text (Ctrl+F)";
+            case UiLabel::ZoomOutTooltip: return "Zoom out";
+            case UiLabel::ResetZoomTooltip: return "Reset zoom";
+            case UiLabel::ZoomInTooltip: return "Zoom in";
+            case UiLabel::Untitled: return "Untitled";
+            case UiLabel::HelpTab: return "Help";
+            case UiLabel::InsertMode: return "INS";
+            case UiLabel::NudiActive: return "INS  · Nudi active";
+            case UiLabel::HelpStatus: return "Help";
+            case UiLabel::Line: return "Ln";
+            case UiLabel::Column: return "Col";
+            case UiLabel::Characters: return "chars";
+            }
+        }
+
+        switch (label)
+        {
+        case UiLabel::File: return u8"ಕಡತ";
+        case UiLabel::Edit: return u8"ಸಂಪಾದಿಸಿ";
+        case UiLabel::View: return u8"ವೀಕ್ಷಿಸಿ";
+        case UiLabel::Engine: return u8"ಎಂಜಿನ್";
+        case UiLabel::Help: return u8"ಸಹಾಯ";
+        case UiLabel::Options: return u8"ಆಯ್ಕೆಗಳು";
+        case UiLabel::New: return u8"ಹೊಸದು";
+        case UiLabel::Open: return u8"ತೆರೆಯಿರಿ";
+        case UiLabel::Save: return u8"ಉಳಿಸಿ";
+        case UiLabel::SaveAs: return u8"ಹೀಗೆ ಉಳಿಸಿ";
+        case UiLabel::Exit: return u8"ನಿರ್ಗಮಿಸಿ";
+        case UiLabel::Cut: return u8"ಕತ್ತರಿಸಿ";
+        case UiLabel::Copy: return u8"ನಕಲಿಸಿ";
+        case UiLabel::Paste: return u8"ಅಂಟಿಸಿ";
+        case UiLabel::SelectAll: return u8"ಎಲ್ಲವನ್ನೂ ಆಯ್ಕೆಮಾಡಿ";
+        case UiLabel::Find: return u8"ಹುಡುಕಿ";
+        case UiLabel::ZoomIn: return u8"ದೊಡ್ಡದಾಗಿ ನೋಡಿ";
+        case UiLabel::ZoomOut: return u8"ಚಿಕ್ಕದಾಗಿ ನೋಡಿ";
+        case UiLabel::ResetZoom: return u8"ಮೂಲ ಗಾತ್ರ";
+        case UiLabel::WordWrap: return u8"ಪದ ಸುತ್ತುವಿಕೆ";
+        case UiLabel::StartEngine: return u8"ನುಡಿ ಎಂಜಿನ್ ಪ್ರಾರಂಭಿಸಿ";
+        case UiLabel::NudiHelp: return u8"ನುಡಿ ಸಹಾಯ";
+        case UiLabel::ShowToolbar: return u8"ಟೂಲ್‌ಬಾರ್ ತೋರಿಸಿ";
+        case UiLabel::ShowStatusBar: return u8"ಸ್ಥಿತಿ ಪಟ್ಟಿ ತೋರಿಸಿ";
+        case UiLabel::NewTabTooltip: return u8"ಹೊಸ ಟ್ಯಾಬ್ (Ctrl+N)";
+        case UiLabel::OpenTooltip: return u8"ಪಠ್ಯ ಕಡತ ತೆರೆಯಿರಿ (Ctrl+O)";
+        case UiLabel::SaveTooltip: return u8"ದಾಖಲೆ ಉಳಿಸಿ (Ctrl+S)";
+        case UiLabel::FindTooltip: return u8"ಪಠ್ಯ ಹುಡುಕಿ (Ctrl+F)";
+        case UiLabel::ZoomOutTooltip: return u8"ಚಿಕ್ಕದಾಗಿ ನೋಡಿ";
+        case UiLabel::ResetZoomTooltip: return u8"ಮೂಲ ಗಾತ್ರಕ್ಕೆ ಹಿಂತಿರುಗಿ";
+        case UiLabel::ZoomInTooltip: return u8"ದೊಡ್ಡದಾಗಿ ನೋಡಿ";
+        case UiLabel::Untitled: return u8"ಹೆಸರಿಲ್ಲದದ್ದು";
+        case UiLabel::HelpTab: return u8"ಸಹಾಯ";
+        case UiLabel::InsertMode: return "INS";
+        case UiLabel::NudiActive: return u8"INS  · ನುಡಿ ಸಕ್ರಿಯ";
+        case UiLabel::HelpStatus: return u8"ಸಹಾಯ";
+        case UiLabel::Line: return u8"ಸಾಲು";
+        case UiLabel::Column: return u8"ಕಾಲಂ";
+        case UiLabel::Characters: return u8"ಅಕ್ಷರಗಳು";
+        }
+        return "";
+    }
+
     int &editor_window_count()
     {
         static int count = 0;
@@ -28,6 +139,8 @@ namespace
         Editor *workspace = nullptr;
         Editor *active_tab = nullptr;
         Editor *help_tab = nullptr;
+        GtkWidget *menu_bar = nullptr;
+        UiLanguage language = UiLanguage::Kannada;
         std::string filename;
         std::string line_ending = "LF";
         int zoom = 14;
@@ -60,6 +173,56 @@ namespace
         return editor->workspace != nullptr ? editor->workspace : editor;
     }
 
+    void mark_ui_label(GtkWidget *widget, UiLabel label)
+    {
+        g_object_set_data(
+            G_OBJECT(widget),
+            "nudi-ui-label",
+        GINT_TO_POINTER(static_cast<int>(label)));
+    }
+
+    void update_window_title(Editor *editor);
+    void update_position_status(Editor *editor);
+
+    void localize_widget(GtkWidget *widget, Editor *app)
+    {
+        gpointer value = g_object_get_data(G_OBJECT(widget), "nudi-ui-label");
+        if (value != nullptr)
+        {
+            const UiLabel label = static_cast<UiLabel>(GPOINTER_TO_INT(value));
+            const char *text = ui_label(app->language, label);
+            if (GTK_IS_MENU_ITEM(widget))
+                gtk_menu_item_set_label(GTK_MENU_ITEM(widget), text);
+            else if (GTK_IS_TOOL_ITEM(widget))
+                gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(widget), text);
+        }
+
+        if (GTK_IS_CONTAINER(widget))
+        {
+            gtk_container_foreach(
+                GTK_CONTAINER(widget),
+                [](GtkWidget *child, gpointer data)
+                {
+                    localize_widget(child, static_cast<Editor *>(data));
+                },
+                app);
+        }
+    }
+
+    void update_ui_language(Editor *editor)
+    {
+        Editor *app = workspace(editor);
+        if (app->menu_bar != nullptr)
+            localize_widget(app->menu_bar, app);
+        if (app->toolbar != nullptr)
+            localize_widget(app->toolbar, app);
+        if (app->active_tab != nullptr)
+        {
+            update_window_title(app->active_tab);
+            update_position_status(app->active_tab);
+        }
+    }
+
     GtkTextBuffer *text_buffer(Editor *editor)
     {
         Editor *tab = document(editor);
@@ -84,11 +247,15 @@ namespace
     {
         Editor *tab = document(editor);
         Editor *app = workspace(editor);
-        std::string name = "Untitled";
+        std::string name = ui_label(
+            app->language,
+            tab->help ? UiLabel::HelpTab : UiLabel::Untitled);
         if (!tab->filename.empty())
         {
             gchar *basename = g_path_get_basename(tab->filename.c_str());
-            name = basename != nullptr ? basename : "Untitled";
+            name = basename != nullptr
+                ? basename
+                : ui_label(app->language, UiLabel::Untitled);
             g_free(basename);
         }
         const std::string title =
@@ -114,7 +281,9 @@ namespace
 
         gtk_label_set_text(
             GTK_LABEL(app->document_status),
-            app->ibus_active ? "INS  · Nudi active" : "INS");
+            app->ibus_active
+                ? ui_label(app->language, UiLabel::NudiActive)
+                : ui_label(app->language, UiLabel::InsertMode));
     }
 
     void update_position_status(Editor *editor)
@@ -132,12 +301,16 @@ namespace
         const int characters = gtk_text_buffer_get_char_count(buffer);
 
         std::string status =
-            "Ln " + std::to_string(line) +
-            ", Col " + std::to_string(column) +
-            "  |  " + std::to_string(characters) + " chars";
+            std::string(ui_label(app->language, UiLabel::Line)) + " " +
+            std::to_string(line) +
+            ", " + ui_label(app->language, UiLabel::Column) + " " +
+            std::to_string(column) +
+            "  |  " + std::to_string(characters) + " " +
+            ui_label(app->language, UiLabel::Characters);
         gtk_label_set_text(GTK_LABEL(app->status), status.c_str());
 
-        std::string document_status = "Help";
+        std::string document_status =
+            ui_label(app->language, UiLabel::HelpStatus);
         if (!document(editor)->help)
         {
             document_status =
@@ -213,6 +386,7 @@ namespace
     void on_help(GtkWidget *, Editor *editor);
     void on_toolbar_toggled(GtkCheckMenuItem *, Editor *editor);
     void on_statusbar_toggled(GtkCheckMenuItem *, Editor *editor);
+    void on_language_toggled(GtkCheckMenuItem *, Editor *editor);
     void find_text(Editor *editor);
     gboolean on_key_press(GtkWidget *, GdkEventKey *, Editor *);
     gboolean on_scroll(GtkWidget *, GdkEventScroll *, Editor *);
@@ -672,14 +846,17 @@ namespace
     GtkToolItem *toolbar_button(
         GtkToolbar *toolbar,
         const char *icon_name,
-        const char *tooltip,
+        UiLabel tooltip,
         GCallback callback,
         Editor *editor)
     {
         GtkToolItem *button = gtk_tool_button_new(
             gtk_image_new_from_icon_name(icon_name, GTK_ICON_SIZE_SMALL_TOOLBAR),
             nullptr);
-        gtk_tool_item_set_tooltip_text(button, tooltip);
+        gtk_tool_item_set_tooltip_text(
+            button,
+            ui_label(editor->language, tooltip));
+        mark_ui_label(GTK_WIDGET(button), tooltip);
         gtk_toolbar_insert(toolbar, button, -1);
         g_signal_connect(button, "clicked", callback, editor);
         return button;
@@ -696,19 +873,19 @@ namespace
         toolbar_button(
             GTK_TOOLBAR(toolbar),
             "document-new",
-            "New tab (Ctrl+N)",
+            UiLabel::NewTabTooltip,
             G_CALLBACK(on_toolbar_new),
             editor);
         toolbar_button(
             GTK_TOOLBAR(toolbar),
             "document-open",
-            "Open text file (Ctrl+O)",
+            UiLabel::OpenTooltip,
             G_CALLBACK(on_toolbar_open),
             editor);
         toolbar_button(
             GTK_TOOLBAR(toolbar),
             "document-save",
-            "Save document (Ctrl+S)",
+            UiLabel::SaveTooltip,
             G_CALLBACK(on_toolbar_save),
             editor);
 
@@ -717,7 +894,7 @@ namespace
         toolbar_button(
             GTK_TOOLBAR(toolbar),
             "edit-find",
-            "Find text (Ctrl+F)",
+            UiLabel::FindTooltip,
             G_CALLBACK(on_toolbar_find),
             editor);
 
@@ -726,19 +903,19 @@ namespace
         toolbar_button(
             GTK_TOOLBAR(toolbar),
             "zoom-out",
-            "Zoom out",
+            UiLabel::ZoomOutTooltip,
             G_CALLBACK(on_toolbar_zoom_out),
             editor);
         toolbar_button(
             GTK_TOOLBAR(toolbar),
             "zoom-original",
-            "Reset zoom",
+            UiLabel::ResetZoomTooltip,
             G_CALLBACK(on_toolbar_zoom_reset),
             editor);
         toolbar_button(
             GTK_TOOLBAR(toolbar),
             "zoom-in",
-            "Zoom in",
+            UiLabel::ZoomInTooltip,
             G_CALLBACK(on_toolbar_zoom_in),
             editor);
 
@@ -760,13 +937,29 @@ namespace
             gtk_check_menu_item_get_active(item));
     }
 
+    void on_language_toggled(GtkCheckMenuItem *item, Editor *editor)
+    {
+        if (!gtk_check_menu_item_get_active(item))
+            return;
+
+        gpointer value = g_object_get_data(G_OBJECT(item), "nudi-language");
+        if (value == nullptr)
+            return;
+
+        Editor *app = workspace(editor);
+        app->language = static_cast<UiLanguage>(GPOINTER_TO_INT(value) - 1);
+        update_ui_language(app);
+    }
+
     GtkWidget *menu_item(
         GtkWidget *menu,
-        const char *label,
+        UiLabel label,
         GCallback callback,
         Editor *editor)
     {
-        GtkWidget *item = gtk_menu_item_new_with_mnemonic(label);
+        GtkWidget *item = gtk_menu_item_new_with_label(
+            ui_label(editor->language, label));
+        mark_ui_label(item, label);
         gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
         g_signal_connect(item, "activate", callback, editor);
         return item;
@@ -776,67 +969,68 @@ namespace
     {
         GtkWidget *bar = gtk_menu_bar_new();
 
-        GtkWidget *file = gtk_menu_item_new_with_mnemonic("_File");
+        auto add_menu = [&](GtkWidget *menu, UiLabel label)
+        {
+            GtkWidget *item = gtk_menu_item_new_with_label(
+                ui_label(editor->language, label));
+            mark_ui_label(item, label);
+            gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), menu);
+            gtk_menu_shell_append(GTK_MENU_SHELL(bar), item);
+        };
+
         GtkWidget *file_menu = gtk_menu_new();
-        gtk_menu_item_set_submenu(GTK_MENU_ITEM(file), file_menu);
-        gtk_menu_shell_append(GTK_MENU_SHELL(bar), file);
-        menu_item(file_menu, "_New", G_CALLBACK(on_new_document), editor);
-        menu_item(file_menu, "_Open", G_CALLBACK(on_open_document), editor);
-        menu_item(file_menu, "_Save", G_CALLBACK(on_save_document), editor);
-        menu_item(file_menu, "Save _As", G_CALLBACK(on_save_as), editor);
+        add_menu(file_menu, UiLabel::File);
+        menu_item(file_menu, UiLabel::New, G_CALLBACK(on_new_document), editor);
+        menu_item(file_menu, UiLabel::Open, G_CALLBACK(on_open_document), editor);
+        menu_item(file_menu, UiLabel::Save, G_CALLBACK(on_save_document), editor);
+        menu_item(file_menu, UiLabel::SaveAs, G_CALLBACK(on_save_as), editor);
         GtkWidget *separator = gtk_separator_menu_item_new();
         gtk_menu_shell_append(GTK_MENU_SHELL(file_menu), separator);
-        menu_item(file_menu, "E_xit", G_CALLBACK(on_exit_menu), editor);
+        menu_item(file_menu, UiLabel::Exit, G_CALLBACK(on_exit_menu), editor);
 
-        GtkWidget *edit = gtk_menu_item_new_with_mnemonic("_Edit");
         GtkWidget *edit_menu = gtk_menu_new();
-        gtk_menu_item_set_submenu(GTK_MENU_ITEM(edit), edit_menu);
-        gtk_menu_shell_append(GTK_MENU_SHELL(bar), edit);
-        menu_item(edit_menu, "Cu_t", G_CALLBACK(on_cut), editor);
-        menu_item(edit_menu, "_Copy", G_CALLBACK(on_copy), editor);
-        menu_item(edit_menu, "_Paste", G_CALLBACK(on_paste), editor);
-        menu_item(edit_menu, "Select _All", G_CALLBACK(on_select_all), editor);
+        add_menu(edit_menu, UiLabel::Edit);
+        menu_item(edit_menu, UiLabel::Cut, G_CALLBACK(on_cut), editor);
+        menu_item(edit_menu, UiLabel::Copy, G_CALLBACK(on_copy), editor);
+        menu_item(edit_menu, UiLabel::Paste, G_CALLBACK(on_paste), editor);
+        menu_item(edit_menu, UiLabel::SelectAll, G_CALLBACK(on_select_all), editor);
         separator = gtk_separator_menu_item_new();
         gtk_menu_shell_append(GTK_MENU_SHELL(edit_menu), separator);
-        menu_item(edit_menu, "_Find", G_CALLBACK(on_find), editor);
+        menu_item(edit_menu, UiLabel::Find, G_CALLBACK(on_find), editor);
 
-        GtkWidget *view = gtk_menu_item_new_with_mnemonic("_View");
         GtkWidget *view_menu = gtk_menu_new();
-        gtk_menu_item_set_submenu(GTK_MENU_ITEM(view), view_menu);
-        gtk_menu_shell_append(GTK_MENU_SHELL(bar), view);
-        menu_item(view_menu, "Zoom _In", G_CALLBACK(on_zoom_in_menu), editor);
-        menu_item(view_menu, "Zoom _Out", G_CALLBACK(on_zoom_out_menu), editor);
-        menu_item(view_menu, "_Reset Zoom", G_CALLBACK(on_zoom_reset_menu), editor);
+        add_menu(view_menu, UiLabel::View);
+        menu_item(view_menu, UiLabel::ZoomIn, G_CALLBACK(on_zoom_in_menu), editor);
+        menu_item(view_menu, UiLabel::ZoomOut, G_CALLBACK(on_zoom_out_menu), editor);
+        menu_item(view_menu, UiLabel::ResetZoom, G_CALLBACK(on_zoom_reset_menu), editor);
         separator = gtk_separator_menu_item_new();
         gtk_menu_shell_append(GTK_MENU_SHELL(view_menu), separator);
-        GtkWidget *wrap = gtk_check_menu_item_new_with_label("Word Wrap");
+        GtkWidget *wrap = gtk_check_menu_item_new_with_label(
+            ui_label(editor->language, UiLabel::WordWrap));
+        mark_ui_label(wrap, UiLabel::WordWrap);
         gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(wrap), TRUE);
         gtk_menu_shell_append(GTK_MENU_SHELL(view_menu), wrap);
         g_signal_connect(wrap, "toggled", G_CALLBACK(on_wrap_toggled), editor);
 
-        GtkWidget *engine = gtk_menu_item_new_with_mnemonic("_Engine");
         GtkWidget *engine_menu = gtk_menu_new();
-        gtk_menu_item_set_submenu(GTK_MENU_ITEM(engine), engine_menu);
-        gtk_menu_shell_append(GTK_MENU_SHELL(bar), engine);
         menu_item(
             engine_menu,
-            "Start _Nudi Engine",
+            UiLabel::StartEngine,
             G_CALLBACK(on_start_engine),
             editor);
+        add_menu(engine_menu, UiLabel::Engine);
 
-        GtkWidget *help = gtk_menu_item_new_with_mnemonic("_Help");
         GtkWidget *help_menu = gtk_menu_new();
-        gtk_menu_item_set_submenu(GTK_MENU_ITEM(help), help_menu);
-        gtk_menu_shell_append(GTK_MENU_SHELL(bar), help);
-        menu_item(help_menu, "_Nudi Help", G_CALLBACK(on_help), editor);
+        add_menu(help_menu, UiLabel::Help);
+        menu_item(help_menu, UiLabel::NudiHelp, G_CALLBACK(on_help), editor);
 
-        GtkWidget *options = gtk_menu_item_new_with_mnemonic("_Options");
         GtkWidget *options_menu = gtk_menu_new();
-        gtk_menu_item_set_submenu(GTK_MENU_ITEM(options), options_menu);
-        gtk_menu_shell_append(GTK_MENU_SHELL(bar), options);
+        add_menu(options_menu, UiLabel::Options);
 
         GtkWidget *toolbar_item =
-            gtk_check_menu_item_new_with_label("Show Toolbar");
+            gtk_check_menu_item_new_with_label(
+                ui_label(editor->language, UiLabel::ShowToolbar));
+        mark_ui_label(toolbar_item, UiLabel::ShowToolbar);
         gtk_check_menu_item_set_active(
             GTK_CHECK_MENU_ITEM(toolbar_item), TRUE);
         gtk_menu_shell_append(GTK_MENU_SHELL(options_menu), toolbar_item);
@@ -847,7 +1041,9 @@ namespace
             editor);
 
         GtkWidget *status_item =
-            gtk_check_menu_item_new_with_label("Show Status Bar");
+            gtk_check_menu_item_new_with_label(
+                ui_label(editor->language, UiLabel::ShowStatusBar));
+        mark_ui_label(status_item, UiLabel::ShowStatusBar);
         gtk_check_menu_item_set_active(
             GTK_CHECK_MENU_ITEM(status_item), TRUE);
         gtk_menu_shell_append(GTK_MENU_SHELL(options_menu), status_item);
@@ -857,6 +1053,39 @@ namespace
             G_CALLBACK(on_statusbar_toggled),
             editor);
 
+        GtkWidget *language_separator = gtk_separator_menu_item_new();
+        gtk_menu_shell_append(
+            GTK_MENU_SHELL(options_menu),
+            language_separator);
+        GtkWidget *kn_ind = gtk_radio_menu_item_new_with_label(
+            nullptr,
+            "KN-IND");
+        GtkWidget *en_ind = gtk_radio_menu_item_new_with_label_from_widget(
+            GTK_RADIO_MENU_ITEM(kn_ind),
+            "EN-IND");
+        g_object_set_data(
+            G_OBJECT(kn_ind),
+            "nudi-language",
+            GINT_TO_POINTER(static_cast<int>(UiLanguage::Kannada) + 1));
+        g_object_set_data(
+            G_OBJECT(en_ind),
+            "nudi-language",
+            GINT_TO_POINTER(static_cast<int>(UiLanguage::English) + 1));
+        gtk_menu_shell_append(GTK_MENU_SHELL(options_menu), kn_ind);
+        gtk_menu_shell_append(GTK_MENU_SHELL(options_menu), en_ind);
+        gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(kn_ind), TRUE);
+        g_signal_connect(
+            kn_ind,
+            "toggled",
+            G_CALLBACK(on_language_toggled),
+            editor);
+        g_signal_connect(
+            en_ind,
+            "toggled",
+            G_CALLBACK(on_language_toggled),
+            editor);
+
+        editor->menu_bar = bar;
         return bar;
     }
 
@@ -1252,11 +1481,12 @@ namespace
             GTK_PACK_END);
         g_signal_connect(plus, "clicked", G_CALLBACK(on_new_document), editor);
 
-        editor->status = gtk_label_new("Ln 1, Col 1  |  0 chars");
+        editor->status = gtk_label_new("");
         gtk_widget_set_halign(editor->status, GTK_ALIGN_START);
         gtk_label_set_xalign(GTK_LABEL(editor->status), 0.0F);
 
-        editor->document_status = gtk_label_new("LF · UTF-8    INS");
+        editor->document_status = gtk_label_new(
+            ui_label(editor->language, UiLabel::InsertMode));
         gtk_label_set_xalign(GTK_LABEL(editor->document_status), 1.0F);
 
         editor->status_bar = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 12);
