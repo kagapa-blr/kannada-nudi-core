@@ -125,6 +125,24 @@ namespace
         return count;
     }
 
+    std::string &previous_ibus_engine()
+    {
+        static std::string engine;
+        return engine;
+    }
+
+    bool &ibus_engine_state_saved()
+    {
+        static bool saved = false;
+        return saved;
+    }
+
+    bool &nudi_engine_selected_by_editor()
+    {
+        static bool selected = false;
+        return selected;
+    }
+
     struct Editor
     {
         GtkWidget *window;
@@ -1304,6 +1322,41 @@ namespace
         return trim_copy(output) == "nudi";
     }
 
+    void save_previous_ibus_engine()
+    {
+        if (ibus_engine_state_saved())
+            return;
+
+        std::string active_engine;
+        if (run_ibus_command("ibus engine", &active_engine))
+        {
+            active_engine = trim_copy(active_engine);
+            if (!active_engine.empty() && active_engine != "nudi")
+            {
+                previous_ibus_engine() = active_engine;
+            }
+        }
+
+        ibus_engine_state_saved() = true;
+    }
+
+    void restore_previous_ibus_engine()
+    {
+        if (!nudi_engine_selected_by_editor())
+            return;
+
+        const std::string engine = previous_ibus_engine().empty()
+            ? "xkb:us::eng"
+            : previous_ibus_engine();
+
+        if (run_ibus_command("ibus engine " + engine))
+        {
+            nudi_engine_selected_by_editor() = false;
+            previous_ibus_engine().clear();
+            ibus_engine_state_saved() = false;
+        }
+    }
+
     bool ensure_ibus_session(Editor *editor, bool allow_start);
     void schedule_ibus_retry(Editor *editor);
 
@@ -1343,6 +1396,8 @@ namespace
             }
         }
 
+        save_previous_ibus_engine();
+
         for (int attempt = 0; attempt < 20 && !is_active_engine_nudi(); ++attempt)
         {
             run_ibus_command("ibus engine nudi");
@@ -1358,6 +1413,8 @@ namespace
             }
             return false;
         }
+
+        nudi_engine_selected_by_editor() = true;
 
         if (editor != nullptr)
         {
@@ -1483,6 +1540,7 @@ namespace
         if (editor_window_count() <= 0)
         {
             editor_window_count() = 0;
+            restore_previous_ibus_engine();
         }
 
         gtk_widget_destroy(widget);
