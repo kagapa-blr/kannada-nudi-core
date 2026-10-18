@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component>
+  <name>com.kagapa.Nudi</name>
+  <description>Kannada Nudi input method maintained by Kannada Ganaka Prathistan</description>
+  <exec>/usr/libexec/ibus-engine-nudi</exec>
+  <version>1.0.0</version>
+  <author>Kannada Ganaka Prathistan (ಕನ್ನಡ ಗಣಕ ಪ್ರತಿಷ್ಠಾನ) and contributors</author>
+  <license>AGPL-3.0-only</license>
+  <engines>
+    <engine>
+      <name>nudi</name>
+      <longname>Nudi Kannada</longname>
+      <description>Kannada Nudi keyboard maintained by Kannada Ganaka Prathistan</description>
+      <language>kn</language>
+      <layout>us</layout>
+      <license>AGPL-3.0-only</license>
+      <rank>80</rank>
+    </engine>
+  </engines>
+</component>

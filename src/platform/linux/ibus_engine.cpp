@@ -121,11 +121,11 @@ namespace
         }
 
         static const char *candidates[] = {
-            "/usr/share/ibus/component/com.example.Nudi.xml",
-            "/usr/local/share/ibus/component/com.example.Nudi.xml",
+            "/usr/share/ibus/component/com.kagapa.Nudi.xml",
+            "/usr/local/share/ibus/component/com.kagapa.Nudi.xml",
 
             // Useful while running directly from the build directory.
-            "./com.example.Nudi.xml",
+            "./com.kagapa.Nudi.xml",
 
             nullptr};
 

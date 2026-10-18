@@ -85,15 +85,15 @@ desktop input-source switcher. To stop the IBus session completely:
 ibus exit
 ```
 
-Runtime diagnostics are written to `/var/log/kannada-nudi/YYYY-MM-DD/`.
+Runtime diagnostics are written to `~/.local/state/kannada-nudi/YYYY-MM-DD/`.
 Each desktop user has a separate `engine-UID.log` file; the logs record engine
 activity and key metadata, but not composed Kannada text.
 
 To inspect the latest log:
 
 ```sh
-ls -ltr /var/log/kannada-nudi/"$(date +%F)"
-tail -f /var/log/kannada-nudi/"$(date +%F)"/engine-"$(id -u)".log
+ls -ltr ~/.local/state/kannada-nudi/"$(date +%F)"
+tail -f ~/.local/state/kannada-nudi/"$(date +%F)"/engine-"$(id -u)".log
 ```
 
 ## 5. Enable the keyboard in Ubuntu
@@ -132,6 +132,11 @@ nudi-editor
 This is useful for checking composition behavior before typing in other apps.
 
 ## 8. Troubleshooting
+
+The editor is not a login autostart application. If Ubuntu restores it after
+reboot or shows a crash dialog, let the desktop finish starting IBus, clear
+“Relaunch this application”, dismiss the dialog, and open the editor from the
+application menu. Do not run it with `sudo`.
 
 If the input method is not visible:
 

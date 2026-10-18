@@ -4,6 +4,12 @@ This project brings the Kannada Nudi keyboard to Ubuntu through IBus. Once
 installed, it works as a normal desktop input method in supported GTK and Qt
 applications.
 
+## License
+
+Kannada Nudi is released under the GNU Affero General Public License version 3
+only (AGPL-3.0-only). See [LICENSE](LICENSE) for the project notice and source
+publication requirements.
+
 ## Download and install
 
 1. Open the latest GitHub Release.
@@ -28,7 +34,7 @@ On Fedora or another RPM-based distribution, install the RPM with:
 sudo dnf install ./kannada-nudi-1.0.0_x86_64.rpm
 ```
 
-4. Ensure the user IBus daemon is running:
+5. Ensure the user IBus daemon is running:
 
 ```sh
 ibus-daemon --panel disable --xim --daemonize
@@ -46,7 +52,7 @@ Select Nudi in the current IBus session:
 ibus engine nudi
 ```
 
-5. Confirm the engine is available:
+6. Confirm the engine is available:
 
 ```sh
 ibus list-engine | grep -i nudi
@@ -74,15 +80,16 @@ desktop input-source switcher. To stop the IBus session completely:
 ibus exit
 ```
 
-Runtime diagnostics are written to `/var/log/kannada-nudi/YYYY-MM-DD/`.
-Each desktop user has a separate `engine-UID.log` file; the logs record engine
-activity and key metadata, but not composed Kannada text.
+Runtime diagnostics are written to the per-user XDG state directory at
+`~/.local/state/kannada-nudi/YYYY-MM-DD/`. Each desktop user has a separate
+`engine-UID.log` file; the logs record engine activity and key metadata, but
+not composed Kannada text.
 
 To inspect the latest log:
 
 ```sh
-ls -ltr /var/log/kannada-nudi/"$(date +%F)"
-tail -f /var/log/kannada-nudi/"$(date +%F)"/engine-"$(id -u)".log
+ls -ltr ~/.local/state/kannada-nudi/"$(date +%F)"
+tail -f ~/.local/state/kannada-nudi/"$(date +%F)"/engine-"$(id -u)".log
 ```
 
 ## Use it in Ubuntu
@@ -99,6 +106,26 @@ Then:
 4. Start typing in Kannada
 
 This works in supported Linux apps as a standard IBus input method.
+
+## Reboot and session restore
+
+The Nudi Editor is a normal desktop application, not a system service or
+login autostart program. If Ubuntu offers to relaunch it after a crash or
+restores it after reboot, let IBus finish starting before opening the editor.
+The current package avoids starting or stopping the desktop IBus daemon during
+editor activation. To stop a repeated crash loop, clear the crash dialog's
+“Relaunch this application” option, dismiss it, and start `Kannada Nudi Editor`
+again from the application menu when needed.
+
+If the editor still fails to open, collect the session diagnostics and start
+it from a terminal:
+
+```sh
+ibus status
+G_MESSAGES_DEBUG=all nudi-editor 2>nudi-editor.log
+```
+
+Do not run the editor with `sudo`; IBus belongs to the logged-in desktop user.
 
 ## Local package install
 
@@ -120,6 +147,7 @@ nudi-editor
 The editor shows the current composition state and helps validate keyboard behavior.
 
 For the complete user walkthrough and troubleshooting steps, see [docs/USER_GUIDE.md](docs/USER_GUIDE.md).
+For release, RPM, dependency, and artifact guidance, see [docs/PACKAGING.md](docs/PACKAGING.md).
 
 ## Developer build
 

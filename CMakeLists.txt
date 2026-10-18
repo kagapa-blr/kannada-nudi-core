@@ -66,7 +66,7 @@ if(UNIX AND NOT APPLE)
     )
 
     install(
-        FILES "${CMAKE_SOURCE_DIR}/com.example.Nudi.xml"
+        FILES "${CMAKE_SOURCE_DIR}/com.kagapa.Nudi.xml"
         DESTINATION share/ibus/component
     )
 

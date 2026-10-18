@@ -1304,10 +1304,10 @@ namespace
         return trim_copy(output) == "nudi";
     }
 
-    bool ensure_ibus_session(Editor *editor);
+    bool ensure_ibus_session(Editor *editor, bool allow_start);
     void schedule_ibus_retry(Editor *editor);
 
-    bool ensure_ibus_session(Editor *editor)
+    bool ensure_ibus_session(Editor *editor, bool allow_start)
     {
         if (editor != nullptr)
         {
@@ -1317,6 +1317,13 @@ namespace
 
         if (!ibus_has_nudi_engine())
         {
+            if (!allow_start)
+            {
+                if (editor != nullptr)
+                    update_status(editor, "IBus is not ready");
+                return false;
+            }
+
             if (!run_ibus_command("ibus-daemon --panel disable --xim --daemonize --replace"))
             {
                 if (editor != nullptr)
@@ -1371,7 +1378,7 @@ namespace
             return G_SOURCE_REMOVE;
         }
 
-        if (ensure_ibus_session(editor))
+        if (ensure_ibus_session(editor, false))
         {
             editor->ibus_retry_source = 0;
             return G_SOURCE_REMOVE;
@@ -1391,19 +1398,9 @@ namespace
             editor);
     }
 
-    void shutdown_ibus_session()
-    {
-        if (editor_window_count() > 0)
-        {
-            return;
-        }
-
-        run_ibus_command("ibus exit");
-    }
-
     void on_start_engine(GtkWidget *, Editor *editor)
     {
-        if (!ensure_ibus_session(editor))
+        if (!ensure_ibus_session(editor, true))
             schedule_ibus_retry(workspace(editor));
     }
 
@@ -1486,7 +1483,6 @@ namespace
         if (editor_window_count() <= 0)
         {
             editor_window_count() = 0;
-            shutdown_ibus_session();
         }
 
         gtk_widget_destroy(widget);
@@ -1614,8 +1610,12 @@ namespace
 
         editor_window_count()++;
         create_tab(editor);
-        if (!ensure_ibus_session(editor))
-            schedule_ibus_retry(editor);
+        // Desktop sessions commonly restore open applications after login.
+        // Do not start, replace, select, or stop IBus during activation: the
+        // desktop's own IBus startup may still be in progress. The explicit
+        // Engine > Start Nudi Engine action remains available for sessions
+        // where IBus is not already running.
+        schedule_ibus_retry(editor);
 
         gtk_widget_show_all(editor->window);
     }
@@ -1625,7 +1625,7 @@ namespace
 int main(int argc, char **argv)
 {
     GtkApplication *application = gtk_application_new(
-        "com.example.NudiEditor", G_APPLICATION_DEFAULT_FLAGS);
+        "com.kagapa.NudiEditor", G_APPLICATION_DEFAULT_FLAGS);
     g_signal_connect(application, "activate", G_CALLBACK(on_activate), nullptr);
     const int status = g_application_run(G_APPLICATION(application), argc, argv);
     g_object_unref(application);

@@ -9,7 +9,7 @@ The project has three deliberately small layers:
 - `src/ibus_engine.cpp` is the IBus adapter. It translates key events into
   composer calls, updates preedit text, and commits Unicode to the focused
   application.
-- `com.example.Nudi.xml` registers the engine with the user's IBus session.
+- `com.kagapa.Nudi.xml` registers the engine with the user's IBus session.
 
 IBus is the integration boundary for ONLYOFFICE and other GTK/Qt applications.
 The engine must not install a global keyboard hook or inject synthetic key
@@ -105,7 +105,7 @@ dpkg-deb -I output/kannada-nudi_1.0.0_amd64.deb | sed -n '/Package:/p;/Version:/
   sequence or modifier layer.
 3. For normal development pushes to `main`, no version edits are required. The
   GitHub Actions release workflow increments the patch number, updates
-  `debian/changelog`, `CMakeLists.txt`, and `com.example.Nudi.xml`, then creates
+  `debian/changelog`, `CMakeLists.txt`, and `com.kagapa.Nudi.xml`, then creates
   the matching tag and `.deb` release asset.
 4. Run the complete local checks, or use `./build-linux-package.sh` for the full local
   build-and-run flow:
@@ -175,7 +175,7 @@ git checkout <release-tag>
 version=<version>
 dch --newversion "$version" --distribution unstable "Release v$version for PPA."
 sed -i -E "s/(project\\(kannada-nudi VERSION )[0-9]+\\.[0-9]+\\.[0-9]+/\\1${version}/" CMakeLists.txt
-sed -i -E "s#(<version>)[0-9]+\\.[0-9]+\\.[0-9]+(</version>)#\\1${version}\\2#" com.example.Nudi.xml
+sed -i -E "s#(<version>)[0-9]+\\.[0-9]+\\.[0-9]+(</version>)#\\1${version}\\2#" com.kagapa.Nudi.xml
 dpkg-buildpackage -S -sa
 dput ppa:YOUR_LAUNCHPAD_ID/nudi ../kannada-nudi_${version}_source.changes
 ```

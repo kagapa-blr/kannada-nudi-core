@@ -8,12 +8,12 @@ if ! grep -q 'ibus_bus_register_component' "$repo_root/src/platform/linux/ibus_e
   exit 1
 fi
 
-if ! grep -q '<name>nudi</name>' "$repo_root/com.example.Nudi.xml"; then
+if ! grep -q '<name>nudi</name>' "$repo_root/com.kagapa.Nudi.xml"; then
   echo 'Component XML is missing the nudi engine definition' >&2
   exit 1
 fi
 
-if ! grep -q '<exec>/usr/libexec/ibus-engine-nudi</exec>' "$repo_root/com.example.Nudi.xml"; then
+if ! grep -q '<exec>/usr/libexec/ibus-engine-nudi</exec>' "$repo_root/com.kagapa.Nudi.xml"; then
   echo 'Component XML is missing the installed ibus engine path' >&2
   exit 1
 fi

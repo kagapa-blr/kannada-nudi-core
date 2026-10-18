@@ -10,3 +10,4 @@ Keywords=Kannada;Keyboard;Input;Editor;
 StartupNotify=true
 StartupWMClass=nudi-editor
 X-GNOME-WMClass=nudi-editor
+X-GNOME-Autostart-enabled=false

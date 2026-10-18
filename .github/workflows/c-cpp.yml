@@ -91,10 +91,10 @@ jobs:
           RELEASE_VERSION: ${{ steps.version.outputs.semantic_version }}
         run: |
           sed -i -E "s/(project\\(kannada-nudi VERSION )[0-9]+\\.[0-9]+\\.[0-9]+/\\1${RELEASE_VERSION}/" CMakeLists.txt
-          sed -i -E "s#(<version>)[0-9]+\\.[0-9]+\\.[0-9]+(</version>)#\\1${RELEASE_VERSION}\\2#" com.example.Nudi.xml
+          sed -i -E "s#(<version>)[0-9]+\\.[0-9]+\\.[0-9]+(</version>)#\\1${RELEASE_VERSION}\\2#" com.kagapa.Nudi.xml
 
           grep -q "project(kannada-nudi VERSION ${RELEASE_VERSION}" CMakeLists.txt
-          grep -q "<version>${RELEASE_VERSION}</version>" com.example.Nudi.xml
+          grep -q "<version>${RELEASE_VERSION}</version>" com.kagapa.Nudi.xml
           dpkg-parsechangelog -S Version | grep -qx "$RELEASE_VERSION"
 
       - name: Build Debian package
@@ -107,11 +107,38 @@ jobs:
           cp "$package_path" "$artifact_path"
           ls -l build-artifacts
 
+      - name: Create corresponding source archive
+        shell: bash
+        env:
+          RELEASE_VERSION: ${{ steps.version.outputs.semantic_version }}
+        run: |
+          tar -czf "build-artifacts/kannada-nudi-${RELEASE_VERSION}.tar.gz" \
+            --transform="s,^linux-nudi-keyboard,kannada-nudi-${RELEASE_VERSION}," \
+            --exclude-vcs \
+            --exclude='linux-nudi-keyboard/build' \
+            --exclude='linux-nudi-keyboard/obj-*' \
+            --exclude='linux-nudi-keyboard/output' \
+            --exclude='linux-nudi-keyboard/debian/.debhelper' \
+            --exclude='linux-nudi-keyboard/debian/*.debhelper.log' \
+            --exclude='linux-nudi-keyboard/debian/files' \
+            --exclude='linux-nudi-keyboard/debian/*.substvars' \
+            --exclude='linux-nudi-keyboard/debian/kannada-nudi' \
+            --exclude='linux-nudi-keyboard/debian/ibus-nudi' \
+            --exclude='linux-nudi-keyboard/debian/kannada-nudi-linux-keyboard' \
+            -C .. \
+            linux-nudi-keyboard
+
       - name: Upload Debian artifact
         uses: actions/upload-artifact@v5
         with:
           name: kannada-nudi-deb
           path: build-artifacts/*.deb
+
+      - name: Upload source artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: kannada-nudi-source
+          path: build-artifacts/*.tar.gz
 
   build-rpm:
     name: Build RPM package
@@ -140,12 +167,22 @@ jobs:
           RELEASE_VERSION: ${{ needs.build.outputs.semantic_version }}
         run: |
           sed -i -E "s/(project\\(kannada-nudi VERSION )[0-9]+\\.[0-9]+\\.[0-9]+/\\1${RELEASE_VERSION}/" CMakeLists.txt
-          sed -i -E "s#(<version>)[0-9]+\\.[0-9]+\\.[0-9]+(</version>)#\\1${RELEASE_VERSION}\\2#" com.example.Nudi.xml
+          sed -i -E "s#(<version>)[0-9]+\\.[0-9]+\\.[0-9]+(</version>)#\\1${RELEASE_VERSION}\\2#" com.kagapa.Nudi.xml
 
           mkdir -p "$HOME/rpmbuild/SOURCES"
           tar -czf "$HOME/rpmbuild/SOURCES/kannada-nudi-${RELEASE_VERSION}.tar.gz" \
             --transform="s,^linux-nudi-keyboard,kannada-nudi-${RELEASE_VERSION}," \
             --exclude-vcs \
+            --exclude='linux-nudi-keyboard/build' \
+            --exclude='linux-nudi-keyboard/obj-*' \
+            --exclude='linux-nudi-keyboard/output' \
+            --exclude='linux-nudi-keyboard/debian/.debhelper' \
+            --exclude='linux-nudi-keyboard/debian/*.debhelper.log' \
+            --exclude='linux-nudi-keyboard/debian/files' \
+            --exclude='linux-nudi-keyboard/debian/*.substvars' \
+            --exclude='linux-nudi-keyboard/debian/kannada-nudi' \
+            --exclude='linux-nudi-keyboard/debian/ibus-nudi' \
+            --exclude='linux-nudi-keyboard/debian/kannada-nudi-linux-keyboard' \
             -C .. \
             linux-nudi-keyboard
 
@@ -208,6 +245,12 @@ jobs:
         uses: actions/download-artifact@v5
         with:
           name: kannada-nudi-deb
+          path: dist
+
+      - name: Download source artifact
+        uses: actions/download-artifact@v5
+        with:
+          name: kannada-nudi-source
           path: dist
 
       - name: Download RPM artifact
