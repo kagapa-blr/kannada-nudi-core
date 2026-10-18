@@ -3,7 +3,7 @@ Version:        %{nudi_version}
 Release:        1%{?dist}
 Summary:        Kannada Nudi Linux keyboard input method
 License:        AGPL-3.0-only
-URL:            https://github.com/kagapa-blr/linux-nudi-keyboard
+URL:            https://github.com/kagapa-blr/kannada-nudi-core
 Source0:        %{name}-%{version}.tar.gz
 
 BuildRequires:  cmake

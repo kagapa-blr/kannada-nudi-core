@@ -1,7 +1,7 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: Kannada Nudi Linux Keyboard
 Upstream-Contact: Nudi Linux contributors <nudi@example.invalid>
-Source: https://github.com/kagapa-blr/linux-nudi-keyboard
+Source: https://github.com/kagapa-blr/kannada-nudi-core
 
 Files: *
 Copyright: 2026 Kannada Ganaka Prathistan (ಕನ್ನಡ ಗಣಕ ಪ್ರತಿಷ್ಠಾನ) and contributors
