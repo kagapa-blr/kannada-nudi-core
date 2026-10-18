@@ -4,11 +4,14 @@
 
 The project has three deliberately small layers:
 
-- `src/nudi_composer.hpp/.cpp` contains the Unicode mapping and composition
+- `src/core/nudi_composer.hpp/.cpp` contains the Unicode mapping and composition
   state machine. It has no GTK, Qt, Wayland, or IBus dependency.
-- `src/ibus_engine.cpp` is the IBus adapter. It translates key events into
+- `src/platform/linux/ibus_engine.cpp` is the IBus adapter. It translates key events into
   composer calls, updates preedit text, and commits Unicode to the focused
   application.
+- `src/platform/linux/nudi_editor.cpp` is the GTK editor. It starts/selects
+  Nudi when opened and restores the previous IBus engine when its last window
+  closes.
 - `com.kagapa.Nudi.xml` registers the engine with the user's IBus session.
 
 IBus is the integration boundary for ONLYOFFICE and other GTK/Qt applications.
@@ -17,11 +20,13 @@ events: those approaches are unreliable or blocked under Wayland.
 
 ## Mapping source of truth
 
-`win-nudi-keyboard.ahk` is the reference implementation. When porting a rule:
+`docs/win-nudi-keyboard.ahk` is the reference implementation. When porting a rule:
 
 1. Record the AHK hotkey, condition, emitted code points, and state changes.
-2. Add the smallest equivalent mapping/state transition in `Composer`.
-3. Add a C++ assertion in `tests/test_composer.cpp` for the sequence.
+2. Add the smallest equivalent mapping/state transition in
+   `src/core/nudi_composer.cpp`.
+3. Add a C++ assertion in `tests/nudi_composer_test.cpp` or a case in
+   `tests/nudi_test_cases.cpp` for the sequence.
 4. Verify the result with code-point-aware tools, not only visual glyph output.
 
 Important control characters are ZWNJ (`U+200C`), ZWJ (`U+200D`), and Kannada
@@ -36,14 +41,14 @@ End users do not need C++, CMake, headers, or development tools. Debian-based
 users download the `.deb` release and install it with Ubuntu's package manager:
 
 ```sh
-sudo apt install ./kannada-nudi_1.0.0_amd64.deb
+sudo apt install ./kannada-nudi_1.0.9_amd64.deb
 ibus-daemon --panel disable --xim --daemonize
 ```
 
 Fedora and other RPM-based users download the `.rpm` release artifact and install it with:
 
 ```sh
-sudo dnf install ./kannada-nudi-1.0.0_x86_64.rpm
+sudo dnf install ./kannada-nudi-1.0.9_x86_64.rpm
 ibus-daemon --panel disable --xim --daemonize
 ```
 
@@ -79,12 +84,21 @@ Build a local package:
 dpkg-buildpackage -us -uc -b
 ```
 
-For local development, use the single command below. It builds the project,
+For local development, use the Linux build script below. It builds the project,
 runs the tests, creates and installs the `.deb`, restarts IBus, waits for the
 engine to register, and selects Nudi:
 
 ```sh
 ./build-linux-package.sh
+```
+
+The script also supports focused commands:
+
+```sh
+./build-linux-package.sh test
+./build-linux-package.sh clean
+./build-linux-package.sh uninstall
+./build-linux-package.sh reinstall
 ```
 
 The package and related Debian artifacts are written to the repository's
@@ -93,15 +107,16 @@ and must not be run with `sudo` itself.
 Inspect the package's runtime dependencies if needed:
 
 ```sh
-dpkg-deb -I output/kannada-nudi_1.0.0_amd64.deb | sed -n '/Package:/p;/Version:/p;/Architecture:/p;/Depends:/p'
+dpkg-deb -I output/kannada-nudi_1.0.9_amd64.deb | sed -n '/Package:/p;/Version:/p;/Architecture:/p;/Depends:/p'
 ```
 
 ## Updating the keyboard
 
-1. Update `src/nudi_composer.cpp` using `win-nudi-keyboard.ahk` as the source of
+1. Update `src/core/nudi_composer.cpp` using `docs/win-nudi-keyboard.ahk` as the source of
   truth. Keep Unicode code points explicit for ZWNJ, ZWJ, virama, and combining
   marks.
-2. Add a regression assertion in `tests/test_composer.cpp` for every new key
+2. Add a regression assertion in `tests/nudi_composer_test.cpp` or a case in
+   `tests/nudi_test_cases.cpp` for every new key
   sequence or modifier layer.
 3. For normal development pushes to `main`, no version edits are required. The
   GitHub Actions release workflow increments the patch number, updates
@@ -233,7 +248,8 @@ echo "$GTK_IM_MODULE/$QT_IM_MODULE"
 ```
 
 The runtime default is `ಅ`, which supports compact input such as `knk` for
-`ಕನಕ`. To test the explicit-vowel reference mode, start the engine or editor
+`ಕನಕ`. The editor automatically starts/selects Nudi on open. To test the
+explicit-vowel reference mode, start the engine or editor
 with `NUDI_DEFAULT_VOWEL=virama`; then `kanaka` produces `ಕನಕ`:
 
 ```sh
@@ -241,9 +257,10 @@ NUDI_DEFAULT_VOWEL=virama ./build/nudi-editor
 NUDI_DEFAULT_VOWEL=virama ibus-daemon --panel disable --xim --replace --daemonize
 ```
 
-The package installs the engine in `/usr/libexec` and component metadata in
-`/usr/share/ibus/component`. IBus launches the process on demand as a
-user-session background service.
+The package installs the engine in `/usr/libexec`, the editor in `/usr/bin`,
+component metadata in `/usr/share/ibus/component`, the desktop entry in
+`/usr/share/applications`, and icons in the hicolor icon directories. IBus
+launches the engine process on demand as a user-session background service.
 
 ## Adding full parity
 

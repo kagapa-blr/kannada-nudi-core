@@ -2,9 +2,9 @@
 
 This project publishes versioned Debian packages for Ubuntu/Debian, RPM
 packages for Fedora-compatible distributions, and a Windows archive through
-GitHub Releases. Packages contain the IBus engine, component metadata, the
-optional `nudi-editor` application, its desktop entry, and icons. Build tools
-and generated build directories are not runtime dependencies.
+GitHub Releases. Linux packages contain the IBus engine, component metadata,
+the `nudi-editor` application, its desktop entry, and icons. Build tools and
+generated build directories are not runtime dependencies.
 
 ## License and source publication
 
@@ -22,10 +22,13 @@ release.
 
 ## Package behavior
 
-The IBus engine is started by the user's IBus session on demand. The editor is
-an ordinary GUI application and is deliberately not installed as a systemd
-service or desktop autostart entry. It must not start or stop the user's IBus
-daemon as a side effect of login, shutdown, or package installation.
+The editor is an ordinary GUI application and is deliberately not installed as
+a systemd service or desktop autostart entry. When launched, it checks for the
+user's IBus session, starts IBus if necessary, and selects the Nudi engine. If
+the session is still initializing, it retries automatically. When the last
+editor window closes, it restores the engine that was active before Nudi; it
+does not stop the shared IBus daemon. The standalone IBus engine is otherwise
+started by the user's IBus session on demand.
 
 Engine diagnostics use the XDG state directory:
 
@@ -44,7 +47,8 @@ Before publishing a release:
 2. Check the installed desktop entry and IBus component paths.
 3. Inspect package metadata and dependencies with `dpkg-deb -I` or `rpm -qip`.
 4. Install the package in a clean user session and verify that reboot/login
-   does not launch the editor unexpectedly.
+   does not launch the editor unexpectedly, while opening the editor starts
+   Nudi automatically.
 5. Test upgrade from the previous release and confirm that the old package
    name is replaced cleanly.
 6. Publish checksums and release notes with the package artifacts.
@@ -61,15 +65,16 @@ On Fedora or in a Fedora container, install `rpm-build`, CMake, the GTK/IBus
 development packages, and `rpmlint`, then run:
 
 ```sh
-rpmbuild -bb --define "nudi_version 1.0.0" packaging/kannada-nudi.spec
-rpmlint ~/rpmbuild/RPMS/*/kannada-nudi-1.0.0-*.rpm
-rpm -qip ~/rpmbuild/RPMS/*/kannada-nudi-1.0.0-*.rpm
-rpm -qlp ~/rpmbuild/RPMS/*/kannada-nudi-1.0.0-*.rpm
+rpmbuild -bb --define "nudi_version 1.0.9" packaging/kannada-nudi.spec
+rpmlint ~/rpmbuild/RPMS/*/kannada-nudi-1.0.9-*.rpm
+rpm -qip ~/rpmbuild/RPMS/*/kannada-nudi-1.0.9-*.rpm
+rpm -qlp ~/rpmbuild/RPMS/*/kannada-nudi-1.0.9-*.rpm
 ```
 
 The spec runs CTest during `%check`, declares runtime dependencies, includes
-the user/developer documentation, refreshes the hicolor icon cache, and uses
-`%autosetup` so the source directory name is validated consistently.
+the README, user/developer documentation, and mapping reference, refreshes the
+hicolor icon cache, and uses `%autosetup -n %{name}-%{version}` so the
+versioned source archive directory is validated consistently.
 
 ## User-facing release notes
 

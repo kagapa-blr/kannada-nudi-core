@@ -14,8 +14,8 @@ publication requirements.
 
 1. Open the latest GitHub Release.
 2. Download the package for your distribution:
-	- Debian, Ubuntu, and Linux Mint: `kannada-nudi_1.0.0_amd64.deb`
-	- Fedora and other RPM-based distributions: `kannada-nudi-1.0.0_x86_64.rpm`
+	- Debian, Ubuntu, and Linux Mint: `kannada-nudi_1.0.9_amd64.deb`
+	- Fedora and other RPM-based distributions: `kannada-nudi-1.0.9_x86_64.rpm`
 3. If an older `kannada-nudi` package is still installed, remove it first:
 
 ```sh
@@ -25,13 +25,13 @@ sudo apt purge -y kannada-nudi
 4. Install it:
 
 ```sh
-sudo apt install ./kannada-nudi_1.0.0_amd64.deb
+sudo apt install ./kannada-nudi_1.0.9_amd64.deb
 ```
 
 On Fedora or another RPM-based distribution, install the RPM with:
 
 ```sh
-sudo dnf install ./kannada-nudi-1.0.0_x86_64.rpm
+sudo dnf install ./kannada-nudi-1.0.9_x86_64.rpm
 ```
 
 5. Ensure the user IBus daemon is running:
@@ -110,12 +110,15 @@ This works in supported Linux apps as a standard IBus input method.
 ## Reboot and session restore
 
 The Nudi Editor is a normal desktop application, not a system service or
-login autostart program. If Ubuntu offers to relaunch it after a crash or
-restores it after reboot, let IBus finish starting before opening the editor.
-The current package avoids starting or stopping the desktop IBus daemon during
-editor activation. To stop a repeated crash loop, clear the crash dialog's
-“Relaunch this application” option, dismiss it, and start `Kannada Nudi Editor`
-again from the application menu when needed.
+login autostart program. When the editor opens, it automatically tries to
+start/select the Nudi engine. If IBus is still starting, it retries in the
+background. When the last editor window closes, it restores the IBus engine
+that was active before Nudi; it does not stop the shared IBus daemon.
+
+If Ubuntu offers to relaunch the editor after a crash or restores it after
+reboot, let the desktop finish starting. To stop a repeated crash loop, clear
+the crash dialog's “Relaunch this application” option, dismiss it, and start
+`Kannada Nudi Editor` again from the application menu when needed.
 
 If the editor still fails to open, collect the session diagnostics and start
 it from a terminal:
@@ -132,7 +135,7 @@ Do not run the editor with `sudo`; IBus belongs to the logged-in desktop user.
 If you are testing a local build instead of a GitHub release, install it the same way:
 
 ```sh
-sudo apt install ./kannada-nudi_1.0.0_amd64.deb
+sudo apt install ./kannada-nudi_1.0.9_amd64.deb
 ibus-daemon --panel disable --xim --daemonize
 ```
 
@@ -144,7 +147,8 @@ You can also launch the included editor for testing the keyboard logic directly:
 nudi-editor
 ```
 
-The editor shows the current composition state and helps validate keyboard behavior.
+The editor starts Nudi automatically and provides a tabbed UTF-8 text editor
+for validating keyboard behavior.
 
 For the complete user walkthrough and troubleshooting steps, see [docs/USER_GUIDE.md](docs/USER_GUIDE.md).
 For release, RPM, dependency, and artifact guidance, see [docs/PACKAGING.md](docs/PACKAGING.md).
@@ -182,5 +186,7 @@ containing `nudi-windows.exe` and the Windows composer test executable.
 
 `win-nudi-keyboard.ahk` remains the behavior reference. The Linux port currently
 covers the base consonants, independent vowels, vowel signs, virama/conjunct
-composition, backspace, and separator handling. The remaining symbol and
-modifier layers should be ported as focused tests before declaring full parity.
+composition, backspace, separator handling, lock-key layers, Kannada digits,
+special signs, and the main conjunct forms. The remaining context-sensitive
+shifted `f` variants and special `x` sequences should be ported as focused
+tests before declaring full parity.
