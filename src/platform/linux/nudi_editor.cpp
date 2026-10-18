@@ -1435,7 +1435,7 @@ namespace
             return G_SOURCE_REMOVE;
         }
 
-        if (ensure_ibus_session(editor, false))
+        if (ensure_ibus_session(editor, true))
         {
             editor->ibus_retry_source = 0;
             return G_SOURCE_REMOVE;
@@ -1668,12 +1668,10 @@ namespace
 
         editor_window_count()++;
         create_tab(editor);
-        // Desktop sessions commonly restore open applications after login.
-        // Do not start, replace, select, or stop IBus during activation: the
-        // desktop's own IBus startup may still be in progress. The explicit
-        // Engine > Start Nudi Engine action remains available for sessions
-        // where IBus is not already running.
-        schedule_ibus_retry(editor);
+        // Start Nudi automatically when the editor opens. If the desktop
+        // IBus session is still starting, keep retrying in the background.
+        if (!ensure_ibus_session(editor, true))
+            schedule_ibus_retry(editor);
 
         gtk_widget_show_all(editor->window);
     }
