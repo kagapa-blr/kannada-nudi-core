@@ -158,6 +158,24 @@ sudo apt install --reinstall ./kannada-nudi_1.0.9_amd64.deb
 ibus-daemon --panel disable --xim --daemonize
 ```
 
+### Linux Mint: Nudi is selected but typing does not work
+
+The editor needs the IBus GTK3 input-method bridge in addition to the Nudi
+engine. The updated Nudi Kacheri Suite Debian package declares `ibus-gtk3` as
+a dependency. If you installed an older package, install the bridge and
+restart the application:
+
+```sh
+sudo apt install ibus-gtk3
+```
+
+Close every Nudi Kacheri Suite window, reopen it, and click **Start Nudi
+Engine** again. The diagnostics should show `GTK=ibus` and
+`GTK3 IBus bridge package: installed`. Then focus the document's text area
+before typing. The “selected in IBus” status confirms engine selection only;
+the engine log path in the dialog can help distinguish missing editor input
+from an engine startup problem.
+
 ## 9. Notes
 
 This project is released as a Debian package for Ubuntu. The latest release asset is the easiest way to install and use it. The local `.deb` flow is mainly for development and testing.
