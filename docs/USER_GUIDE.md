@@ -76,11 +76,25 @@ You should see something like:
 nudi - Nudi Kannada
 ```
 
-## 4. Stop Nudi
+## 4. Switch between Nudi and English
 
-To stop using Nudi, switch back to your normal keyboard layout from the
-desktop input-source switcher. This changes the active engine but keeps the
-shared IBus session running. To stop the IBus session completely:
+The built-in editor starts Nudi automatically. While the editor is focused,
+press **Win+Space** to switch between Nudi Kannada and the US English
+keyboard. You can also use the toggle in the Engine menu. This changes the
+active IBus engine, but keeps the shared IBus session running.
+
+Some Linux desktops reserve Win+Space for their global input-source switcher
+and may consume it before the editor receives it. Ubuntu GNOME reserves it by
+default. To use Win+Space in the editor, change “Switch to next input source”
+in Settings → Keyboard → Keyboard Shortcuts → Typing to a different key
+combination, or disable that desktop shortcut.
+To select US English manually:
+
+```sh
+ibus engine xkb:us::eng
+```
+
+To stop the IBus session completely:
 
 ```sh
 ibus exit
@@ -110,7 +124,7 @@ Then:
 3. Select `Nudi Kannada`
 4. Confirm it is active
 
-You can now switch keyboard layouts with the normal GNOME input-source switcher.
+You can switch keyboard layouts with the normal GNOME input-source switcher.
 
 ## 6. Start typing in Kannada
 
@@ -130,9 +144,10 @@ You can also launch the included editor for testing the composer directly:
 nudi-editor
 ```
 
-The editor automatically starts/selects Nudi when it opens. When the last
-editor window closes, it restores the IBus engine that was active previously.
-This is useful for checking composition behavior before typing in other apps.
+The editor automatically starts/selects Nudi when it opens. Press Win+Space
+to toggle Nudi and US English while it is focused. When the last editor window
+closes, it restores the IBus engine that was active previously. This is useful
+for checking composition behavior before typing in other apps.
 
 ## 8. Troubleshooting
 

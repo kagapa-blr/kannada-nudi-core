@@ -64,5 +64,5 @@ if command -v gtk-update-icon-cache >/dev/null 2>&1; then
 fi
 
 %changelog
-* Thu Sep 03 2026 Nudi Linux contributors <nudi@example.invalid> - 1.0.0-1
+* Thu Sep 03 2026 Nudi Linux contributors <kagapa@gmail.com> - 1.0.0-1
 - Initial RPM package.

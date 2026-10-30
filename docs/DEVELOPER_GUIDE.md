@@ -10,8 +10,8 @@ The project has three deliberately small layers:
   composer calls, updates preedit text, and commits Unicode to the focused
   application.
 - `src/platform/linux/nudi_editor.cpp` is the GTK editor. It starts/selects
-  Nudi when opened and restores the previous IBus engine when its last window
-  closes.
+  Nudi when opened, toggles between Nudi and US English with Win+Space, and
+  restores the previous IBus engine when its last window closes.
 - `com.kagapa.Nudi.xml` registers the engine with the user's IBus session.
 
 IBus is the integration boundary for ONLYOFFICE and other GTK/Qt applications.

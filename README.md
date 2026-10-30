@@ -64,17 +64,34 @@ You should see output similar to:
 nudi - Nudi Kannada
 ```
 
-## Start and stop Nudi
+## Switch between Nudi and English
 
-Start the IBus session and select Nudi:
+The Nudi Editor starts Nudi automatically. While the editor is focused, press
+**Win+Space** to switch between Nudi Kannada and the US English keyboard.
+The same toggle is available from the Engine menu. This changes the active
+IBus engine; it does not stop the shared IBus session. When the last editor
+window closes, the editor restores the engine that was active before launch.
+
+On Linux desktops that reserve Win+Space for switching input sources, the
+desktop may handle the shortcut before the editor sees it. Ubuntu GNOME
+reserves it by default. Change the “Switch to next input source” shortcut in
+Settings → Keyboard → Keyboard Shortcuts → Typing to a different key
+combination (or disable it) to use Win+Space in the editor.
+
+To select Nudi manually outside the editor:
 
 ```sh
 ibus-daemon --panel disable --xim --daemonize
 ibus engine nudi
 ```
 
-To stop using Nudi, switch back to your normal keyboard layout from the
-desktop input-source switcher. To stop the IBus session completely:
+To select US English manually:
+
+```sh
+ibus engine xkb:us::eng
+```
+
+To stop the IBus session completely:
 
 ```sh
 ibus exit
@@ -112,8 +129,9 @@ This works in supported Linux apps as a standard IBus input method.
 The Nudi Editor is a normal desktop application, not a system service or
 login autostart program. When the editor opens, it automatically tries to
 start/select the Nudi engine. If IBus is still starting, it retries in the
-background. When the last editor window closes, it restores the IBus engine
-that was active before Nudi; it does not stop the shared IBus daemon.
+background. Win+Space toggles between Nudi and US English. When the last
+editor window closes, it restores the IBus engine that was active before Nudi;
+it does not stop the shared IBus daemon.
 
 If Ubuntu offers to relaunch the editor after a crash or restores it after
 reboot, let the desktop finish starting. To stop a repeated crash loop, clear

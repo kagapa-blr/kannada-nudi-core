@@ -1,5 +1,13 @@
+kannada-nudi (1.0.2) unstable; urgency=medium
+
+  * Add a GTK window accelerator for the Win+Space engine toggle.
+  * Replace the conflicting nudi-kacheri-suite package during migration.
+  * Skip local package installation when the same or a newer version is installed.
+
+ -- Nudi Linux contributors <kagapa@gmail.com>  Sat, 31 Oct 2026 00:01:28 +0530
+
 kannada-nudi (1.0.0) unstable; urgency=medium
 
   * Add IBus diagnostics and reliable engine activation.
 
- -- Nudi Linux contributors <nudi@example.invalid>  Fri, 28 Aug 2026 00:00:00 +0000
+ -- Nudi Linux contributors <kagapa@gmail.com>  Fri, 28 Aug 2026 00:00:00 +0000

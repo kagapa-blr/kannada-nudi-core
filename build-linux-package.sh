@@ -144,18 +144,24 @@ create_package() {
 }
 
 install_package() {
-    package_path=$(find "$project_dir/output" -maxdepth 1 -type f -name 'kannada-nudi*_amd64.deb' -print | head -n 1)
+    package_version=$(dpkg-parsechangelog -S Version)
+    package_path="$output_dir/kannada-nudi_${package_version}_amd64.deb"
 
-    if [[ -z "$package_path" ]]; then
+    if [[ ! -f "$package_path" ]]; then
         printf '%s\n' 'Could not find the Nudi Debian package.' >&2
+        printf '%s\n' "$package_path" >&2
         exit 1
     fi
 
-    printf '\n========================================\n'
-    printf '%s\n' 'Installing Nudi'
-    printf '%s\n' '========================================'
+    if dpkg-query -W -f='${db:Status-Status}' kannada-nudi 2>/dev/null | grep -qx 'installed'; then
+        installed_version=$(dpkg-query -W -f='${Version}' kannada-nudi)
+        if dpkg --compare-versions "$installed_version" ge "$package_version"; then
+            return 0
+        fi
+    fi
 
-    run_as_root apt install --reinstall "$package_path"
+    run_as_root env DEBIAN_FRONTEND=noninteractive \
+        apt-get install -y -qq "$package_path"
 }
 
 uninstall_package() {

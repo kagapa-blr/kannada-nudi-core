@@ -30,6 +30,12 @@ editor window closes, it restores the engine that was active before Nudi; it
 does not stop the shared IBus daemon. The standalone IBus engine is otherwise
 started by the user's IBus session on demand.
 
+The Debian package declares conflicts/replacements for legacy Nudi packages,
+including `nudi-kacheri-suite`, so apt removes an old package that owns the
+same IBus executable during migration. The `build-linux-package.sh` installer
+upgrades an older `kannada-nudi` version noninteractively and skips installation
+when the same or a newer version is already present.
+
 Engine diagnostics use the XDG state directory:
 
 ```text

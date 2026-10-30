@@ -1,7 +1,7 @@
 Source: kannada-nudi
 Section: utils
 Priority: optional
-Maintainer: Nudi Linux contributors <nudi@example.invalid>
+Maintainer: Nudi Linux contributors <kagapa@gmail.com>
 Homepage: https://github.com/kagapa-blr/kannada-nudi-core
 Build-Depends: debhelper-compat (= 13), cmake, g++, libglib2.0-dev, libgtk-3-dev, libibus-1.0-dev, pkg-config
 Standards-Version: 4.6.2
@@ -10,8 +10,8 @@ Rules-Requires-Root: no
 Package: kannada-nudi
 Architecture: amd64
 Depends: ${shlibs:Depends}, ${misc:Depends}, ibus
-Conflicts: ibus-nudi, kannada-nudi-linux-keyboard
-Replaces: ibus-nudi, kannada-nudi-linux-keyboard
+Conflicts: ibus-nudi, kannada-nudi-linux-keyboard, nudi-kacheri-suite
+Replaces: ibus-nudi, kannada-nudi-linux-keyboard, nudi-kacheri-suite
 Breaks: ibus-nudi (<< 1.0.1-1), kannada-nudi-linux-keyboard (<< 1.0.1-1)
 Description: Kannada Nudi Linux keyboard input method
  A Kannada Nudi transliteration input method for Linux desktops using IBus.

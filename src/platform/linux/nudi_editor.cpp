@@ -19,10 +19,10 @@ namespace
         File, Edit, View, Engine, Help, Options,
         New, Open, Save, SaveAs, Exit, Cut, Copy, Paste,
         SelectAll, Find, ZoomIn, ZoomOut, ResetZoom, WordWrap,
-        StartEngine, NudiHelp, ShowToolbar, ShowStatusBar,
+        ToggleEngine, NudiHelp, ShowToolbar, ShowStatusBar,
         NewTabTooltip, OpenTooltip, SaveTooltip, FindTooltip,
         ZoomOutTooltip, ResetZoomTooltip, ZoomInTooltip,
-        Untitled, HelpTab, InsertMode, NudiActive, HelpStatus,
+        Untitled, HelpTab, InsertMode, NudiActive, EnglishActive, HelpStatus,
         Line, Column, Characters
     };
 
@@ -52,7 +52,7 @@ namespace
             case UiLabel::ZoomOut: return "Zoom Out";
             case UiLabel::ResetZoom: return "Reset Zoom";
             case UiLabel::WordWrap: return "Word Wrap";
-            case UiLabel::StartEngine: return "Start Nudi Engine";
+            case UiLabel::ToggleEngine: return "Toggle Nudi / English (Win+Space)";
             case UiLabel::NudiHelp: return "Nudi Help";
             case UiLabel::ShowToolbar: return "Show Toolbar";
             case UiLabel::ShowStatusBar: return "Show Status Bar";
@@ -67,6 +67,7 @@ namespace
             case UiLabel::HelpTab: return "Help";
             case UiLabel::InsertMode: return "INS";
             case UiLabel::NudiActive: return "INS  · Nudi active";
+            case UiLabel::EnglishActive: return "INS  · English active";
             case UiLabel::HelpStatus: return "Help";
             case UiLabel::Line: return "Ln";
             case UiLabel::Column: return "Col";
@@ -96,7 +97,7 @@ namespace
         case UiLabel::ZoomOut: return u8"ಚಿಕ್ಕದಾಗಿ ನೋಡಿ";
         case UiLabel::ResetZoom: return u8"ಮೂಲ ಗಾತ್ರ";
         case UiLabel::WordWrap: return u8"ಪದ ಸುತ್ತುವಿಕೆ";
-        case UiLabel::StartEngine: return u8"ನುಡಿ ಎಂಜಿನ್ ಪ್ರಾರಂಭಿಸಿ";
+        case UiLabel::ToggleEngine: return u8"ನುಡಿ / ಇಂಗ್ಲಿಷ್ ಬದಲಿಸಿ (Win+Space)";
         case UiLabel::NudiHelp: return u8"ನುಡಿ ಸಹಾಯ";
         case UiLabel::ShowToolbar: return u8"ಟೂಲ್‌ಬಾರ್ ತೋರಿಸಿ";
         case UiLabel::ShowStatusBar: return u8"ಸ್ಥಿತಿ ಪಟ್ಟಿ ತೋರಿಸಿ";
@@ -111,6 +112,7 @@ namespace
         case UiLabel::HelpTab: return u8"ಸಹಾಯ";
         case UiLabel::InsertMode: return "INS";
         case UiLabel::NudiActive: return u8"INS  · ನುಡಿ ಸಕ್ರಿಯ";
+        case UiLabel::EnglishActive: return u8"INS  · ಇಂಗ್ಲಿಷ್ ಸಕ್ರಿಯ";
         case UiLabel::HelpStatus: return u8"ಸಹಾಯ";
         case UiLabel::Line: return u8"ಸಾಲು";
         case UiLabel::Column: return u8"ಕಾಲಂ";
@@ -159,6 +161,7 @@ namespace
         Editor *active_tab = nullptr;
         Editor *help_tab = nullptr;
         GtkWidget *menu_bar = nullptr;
+        GtkAccelGroup *accel_group = nullptr;
         UiLanguage language = UiLanguage::Kannada;
         guint ibus_retry_source = 0;
         std::string filename;
@@ -167,6 +170,7 @@ namespace
         bool dirty = false;
         bool loading = false;
         bool ibus_active = false;
+        bool nudi_enabled = true;
         bool help = false;
 
         ~Editor()
@@ -336,7 +340,12 @@ namespace
         if (!document(editor)->help)
         {
             document_status =
-                document(editor)->line_ending + " · UTF-8    INS";
+                document(editor)->line_ending + " · UTF-8    " +
+                ui_label(
+                    app->language,
+                    app->ibus_active
+                        ? UiLabel::NudiActive
+                        : UiLabel::EnglishActive);
         }
         gtk_label_set_text(
             GTK_LABEL(app->document_status),
@@ -404,7 +413,7 @@ namespace
     void on_open_document(GtkWidget *, Editor *editor);
     void on_save_document(GtkWidget *, Editor *editor);
     void on_save_as(GtkWidget *, Editor *editor);
-    void on_start_engine(GtkWidget *, Editor *editor);
+    void on_toggle_engine(GtkWidget *, Editor *editor);
     void on_help(GtkWidget *, Editor *editor);
     void on_toolbar_toggled(GtkCheckMenuItem *, Editor *editor);
     void on_statusbar_toggled(GtkCheckMenuItem *, Editor *editor);
@@ -1035,11 +1044,18 @@ namespace
         g_signal_connect(wrap, "toggled", G_CALLBACK(on_wrap_toggled), editor);
 
         GtkWidget *engine_menu = gtk_menu_new();
-        menu_item(
+        GtkWidget *toggle_engine = menu_item(
             engine_menu,
-            UiLabel::StartEngine,
-            G_CALLBACK(on_start_engine),
+            UiLabel::ToggleEngine,
+            G_CALLBACK(on_toggle_engine),
             editor);
+        gtk_widget_add_accelerator(
+            toggle_engine,
+            "activate",
+            editor->accel_group,
+            GDK_KEY_space,
+            GDK_SUPER_MASK,
+            static_cast<GtkAccelFlags>(0));
         add_menu(engine_menu, UiLabel::Engine);
 
         GtkWidget *help_menu = gtk_menu_new();
@@ -1190,6 +1206,14 @@ namespace
             (event->state & GDK_CONTROL_MASK) != 0;
         const bool alternate =
             (event->state & GDK_MOD1_MASK) != 0;
+        const bool super =
+            (event->state & (GDK_SUPER_MASK | GDK_MOD4_MASK)) != 0;
+
+        if (super && event->keyval == GDK_KEY_space && !control && !alternate)
+        {
+            on_toggle_engine(nullptr, editor);
+            return TRUE;
+        }
 
         // Keep document commands available while IBus owns normal input.
         if (control && !alternate)
@@ -1311,15 +1335,18 @@ namespace
         return output.find("nudi") != std::string::npos;
     }
 
-    bool is_active_engine_nudi()
+    bool is_active_engine(const std::string &engine)
     {
         std::string output;
         if (!run_ibus_command("ibus engine", &output))
-        {
             return false;
-        }
 
-        return trim_copy(output) == "nudi";
+        return trim_copy(output) == engine;
+    }
+
+    bool is_active_engine_nudi()
+    {
+        return is_active_engine("nudi");
     }
 
     void save_previous_ibus_engine()
@@ -1428,7 +1455,7 @@ namespace
     gboolean retry_ibus_session(gpointer data)
     {
         Editor *editor = static_cast<Editor *>(data);
-        if (editor == nullptr || editor->ibus_active)
+        if (editor == nullptr || editor->ibus_active || !editor->nudi_enabled)
         {
             if (editor != nullptr)
                 editor->ibus_retry_source = 0;
@@ -1455,10 +1482,39 @@ namespace
             editor);
     }
 
-    void on_start_engine(GtkWidget *, Editor *editor)
+    void on_toggle_engine(GtkWidget *, Editor *editor)
     {
-        if (!ensure_ibus_session(editor, true))
-            schedule_ibus_retry(workspace(editor));
+        Editor *app = workspace(editor);
+        const bool nudi_is_active = is_active_engine_nudi();
+        const bool nudi_start_is_pending =
+            app->nudi_enabled &&
+            app->ibus_retry_source != 0 &&
+            !nudi_is_active;
+        if (nudi_is_active || nudi_start_is_pending)
+        {
+            app->nudi_enabled = false;
+            if (app->ibus_retry_source != 0)
+            {
+                g_source_remove(app->ibus_retry_source);
+                app->ibus_retry_source = 0;
+            }
+
+            if (!run_ibus_command("ibus engine xkb:us::eng") ||
+                !is_active_engine("xkb:us::eng"))
+            {
+                app->ibus_active = nudi_is_active;
+                update_status(app, "Could not switch to English");
+                return;
+            }
+
+            app->ibus_active = false;
+            update_status(app, "INS  · English active");
+            return;
+        }
+
+        app->nudi_enabled = true;
+        if (!ensure_ibus_session(app, true))
+            schedule_ibus_retry(app);
     }
 
     void on_new_document(GtkWidget *, Editor *editor)
@@ -1587,6 +1643,11 @@ namespace
     {
         Editor *editor = new Editor{};
         editor->window = gtk_application_window_new(application);
+        editor->accel_group = gtk_accel_group_new();
+        gtk_window_add_accel_group(
+            GTK_WINDOW(editor->window),
+            editor->accel_group);
+        g_object_unref(editor->accel_group);
         gtk_window_set_title(GTK_WINDOW(editor->window), "Kannada Nudi Editor");
         set_editor_icon(editor->window);
         gtk_window_set_default_size(GTK_WINDOW(editor->window), 720, 460);
