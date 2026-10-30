@@ -1649,6 +1649,11 @@ namespace
             editor->accel_group);
         g_object_unref(editor->accel_group);
         gtk_window_set_title(GTK_WINDOW(editor->window), "Kannada Nudi Editor");
+        g_signal_connect(
+            editor->window,
+            "key-press-event",
+            G_CALLBACK(on_key_press),
+            editor);
         set_editor_icon(editor->window);
         gtk_window_set_default_size(GTK_WINDOW(editor->window), 720, 460);
 

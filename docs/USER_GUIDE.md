@@ -7,13 +7,13 @@ This guide explains how to download, install, enable, and use the Kannada Nudi k
 Go to the project's GitHub Releases page and download the package for your distribution. For example:
 
 ```sh
-kannada-nudi_1.0.9_amd64.deb
+kannada-nudi_1.0.0_amd64.deb
 ```
 
 For Fedora and other RPM-based distributions, download the corresponding:
 
 ```sh
-kannada-nudi-1.0.9_x86_64.rpm
+kannada-nudi-1.0.0_x86_64.rpm
 ```
 
 You can also use a local `.deb` file if you are testing a build on your machine.
@@ -29,19 +29,19 @@ sudo apt purge -y kannada-nudi
 Then install the downloaded file:
 
 ```sh
-sudo apt install ./kannada-nudi_1.0.9_amd64.deb
+sudo apt install ./kannada-nudi_1.0.0_amd64.deb
 ```
 
 On Fedora or another RPM-based distribution:
 
 ```sh
-sudo dnf install ./kannada-nudi-1.0.9_x86_64.rpm
+sudo dnf install ./kannada-nudi-1.0.0_x86_64.rpm
 ```
 
 If the file is in another folder, use the full path instead:
 
 ```sh
-sudo apt install /path/to/kannada-nudi_1.0.9_amd64.deb
+sudo apt install /path/to/kannada-nudi_1.0.0_amd64.deb
 ```
 
 ## 3. Start or restart IBus
@@ -169,7 +169,7 @@ Then add it again from Settings → Keyboard → Input Sources.
 If it still does not appear, reinstall the package:
 
 ```sh
-sudo apt install --reinstall ./kannada-nudi_1.0.9_amd64.deb
+sudo apt install --reinstall ./kannada-nudi_1.0.0_amd64.deb
 ibus-daemon --panel disable --xim --daemonize
 ```
 

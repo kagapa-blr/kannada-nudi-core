@@ -14,8 +14,8 @@ publication requirements.
 
 1. Open the latest GitHub Release.
 2. Download the package for your distribution:
-	- Debian, Ubuntu, and Linux Mint: `kannada-nudi_1.0.9_amd64.deb`
-	- Fedora and other RPM-based distributions: `kannada-nudi-1.0.9_x86_64.rpm`
+	- Debian, Ubuntu, and Linux Mint: `kannada-nudi_1.0.0_amd64.deb`
+	- Fedora and other RPM-based distributions: `kannada-nudi-1.0.0_x86_64.rpm`
 3. If an older `kannada-nudi` package is still installed, remove it first:
 
 ```sh
@@ -25,13 +25,13 @@ sudo apt purge -y kannada-nudi
 4. Install it:
 
 ```sh
-sudo apt install ./kannada-nudi_1.0.9_amd64.deb
+sudo apt install ./kannada-nudi_1.0.0_amd64.deb
 ```
 
 On Fedora or another RPM-based distribution, install the RPM with:
 
 ```sh
-sudo dnf install ./kannada-nudi-1.0.9_x86_64.rpm
+sudo dnf install ./kannada-nudi-1.0.0_x86_64.rpm
 ```
 
 5. Ensure the user IBus daemon is running:
@@ -153,7 +153,7 @@ Do not run the editor with `sudo`; IBus belongs to the logged-in desktop user.
 If you are testing a local build instead of a GitHub release, install it the same way:
 
 ```sh
-sudo apt install ./kannada-nudi_1.0.9_amd64.deb
+sudo apt install ./kannada-nudi_1.0.0_amd64.deb
 ibus-daemon --panel disable --xim --daemonize
 ```
 

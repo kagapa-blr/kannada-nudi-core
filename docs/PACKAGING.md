@@ -71,10 +71,10 @@ On Fedora or in a Fedora container, install `rpm-build`, CMake, the GTK/IBus
 development packages, and `rpmlint`, then run:
 
 ```sh
-rpmbuild -bb --define "nudi_version 1.0.9" packaging/kannada-nudi.spec
-rpmlint ~/rpmbuild/RPMS/*/kannada-nudi-1.0.9-*.rpm
-rpm -qip ~/rpmbuild/RPMS/*/kannada-nudi-1.0.9-*.rpm
-rpm -qlp ~/rpmbuild/RPMS/*/kannada-nudi-1.0.9-*.rpm
+rpmbuild -bb --define "nudi_version 1.0.0" packaging/kannada-nudi.spec
+rpmlint ~/rpmbuild/RPMS/*/kannada-nudi-1.0.0-*.rpm
+rpm -qip ~/rpmbuild/RPMS/*/kannada-nudi-1.0.0-*.rpm
+rpm -qlp ~/rpmbuild/RPMS/*/kannada-nudi-1.0.0-*.rpm
 ```
 
 The spec runs CTest during `%check`, declares runtime dependencies, includes

@@ -41,14 +41,14 @@ End users do not need C++, CMake, headers, or development tools. Debian-based
 users download the `.deb` release and install it with Ubuntu's package manager:
 
 ```sh
-sudo apt install ./kannada-nudi_1.0.9_amd64.deb
+sudo apt install ./kannada-nudi_1.0.0_amd64.deb
 ibus-daemon --panel disable --xim --daemonize
 ```
 
 Fedora and other RPM-based users download the `.rpm` release artifact and install it with:
 
 ```sh
-sudo dnf install ./kannada-nudi-1.0.9_x86_64.rpm
+sudo dnf install ./kannada-nudi-1.0.0_x86_64.rpm
 ibus-daemon --panel disable --xim --daemonize
 ```
 
@@ -107,7 +107,7 @@ and must not be run with `sudo` itself.
 Inspect the package's runtime dependencies if needed:
 
 ```sh
-dpkg-deb -I output/kannada-nudi_1.0.9_amd64.deb | sed -n '/Package:/p;/Version:/p;/Architecture:/p;/Depends:/p'
+dpkg-deb -I output/kannada-nudi_1.0.0_amd64.deb | sed -n '/Package:/p;/Version:/p;/Architecture:/p;/Depends:/p'
 ```
 
 ## Updating the keyboard
@@ -196,7 +196,7 @@ dput ppa:YOUR_LAUNCHPAD_ID/nudi ../kannada-nudi_${version}_source.changes
 ```
 
 Replace `<release-tag>` and `<version>` with the actual release values, such
-as `v1.0.2` and `1.0.2`. These commands modify the detached local checkout only;
+as `v1.0.0` and `1.0.0`. These commands modify the detached local checkout only;
 do not commit or push those generated PPA metadata changes. Wait for Launchpad
 to finish building the package for the required Ubuntu series before asking
 users to install it. Check the build status on the PPA page and confirm the
